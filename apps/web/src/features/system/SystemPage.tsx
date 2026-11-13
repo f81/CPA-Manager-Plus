@@ -22,6 +22,7 @@ import {
 import { apiKeysApi } from '@/services/api/apiKeys';
 import { usageServiceApi, type UsageServiceStatus } from '@/services/api/usageService';
 import { classifyModels, modelDisplayLabel } from '@/utils/models';
+import { copyToClipboard } from '@/utils/clipboard';
 import { STORAGE_KEY_AUTH, STORAGE_KEY_QUOTA_CACHE } from '@/utils/constants';
 import iconGemini from '@/assets/icons/gemini.svg';
 import iconClaude from '@/assets/icons/claude.svg';
@@ -243,6 +244,14 @@ function SystemPageContent() {
     featureAvailability.managerServiceBase,
   ]);
 
+  const handleCopyModelName = async (name: string) => {
+    const copied = await copyToClipboard(name);
+    showNotification(
+      copied ? `${t('common.copied')}: ${name}` : t('notification.copy_failed'),
+      copied ? 'success' : 'error'
+    );
+  };
+
   const handleClearLoginStorage = () => {
     showConfirmation({
       title: t('system_info.clear_login_title', { defaultValue: 'Clear Login Storage' }),
@@ -413,14 +422,16 @@ function SystemPageContent() {
                       {group.items.map((model) => {
                         const label = modelDisplayLabel(model);
                         return (
-                          <span
+                          <button
+                            type="button"
                             key={`${model.name}-${label || 'default'}`}
                             className={styles.modelTag}
-                            title={model.description || ''}
+                            title={model.description || t('common.copy')}
+                            onClick={() => void handleCopyModelName(model.name)}
                           >
                             <span className={styles.modelName}>{model.name}</span>
                             {label && <span className={styles.modelAlias}>{label}</span>}
-                          </span>
+                          </button>
                         );
                       })}
                     </div>
