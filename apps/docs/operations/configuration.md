@@ -38,6 +38,8 @@ Docker 默认路径：
 
 如果未配置，首次启动会生成随机管理员密钥并输出到日志。该值不会再次显示。
 
+如果已配置，Manager Server 每次启动都会重新应用该值：当它与已保存的凭证不一致时，会替换已保存的哈希，并在日志输出 `admin key updated from CPA_MANAGER_ADMIN_KEY configuration`。要修改管理员密钥，只需修改该值（例如 Docker Compose 的 `.env`）并重启容器。删除该变量会保留最后一次保存的密钥。
+
 ## CPA Management Key
 
 CPA Management Key 用于访问 CPA 管理接口。

@@ -38,6 +38,8 @@ Configure it with:
 
 If it is not configured, the first startup generates a random admin key and prints it to the logs. It will not be shown again.
 
+When it is configured, Manager Server re-applies it on every start: if the value no longer matches the stored credential, the stored hash is replaced and the log prints `admin key updated from CPA_MANAGER_ADMIN_KEY configuration`. To change the admin key, edit the value (for example in the Docker Compose `.env`) and restart the container. Removing the variable keeps the last stored key.
+
 ## CPA Management Key
 
 CPAMP uses the CPA Management Key to access the CPA management API.

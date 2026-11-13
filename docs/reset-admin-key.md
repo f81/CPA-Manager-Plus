@@ -4,6 +4,8 @@ This guide resets the CPA Manager Plus Manager Server admin key used by the full
 
 The reset command edits the local SQLite database. Stop Manager Server first so SQLite is not being written while the credential changes.
 
+If `CPA_MANAGER_ADMIN_KEY` or `CPA_MANAGER_ADMIN_KEY_FILE` is set, Manager Server re-applies that value on every start and overrides a key written by this command. In that case, change the configured value and restart instead.
+
 ## What the Command Does
 
 `cpa-manager-plus reset-admin-key` replaces `settings.admin_credential_v1` in the Manager Server SQLite database with a new salted HMAC credential.

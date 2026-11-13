@@ -4,6 +4,8 @@
 
 重置命令会直接修改本地 SQLite 数据库。执行前请先停止 Manager Server，避免服务运行中继续写入 SQLite。
 
+如果设置了 `CPA_MANAGER_ADMIN_KEY` 或 `CPA_MANAGER_ADMIN_KEY_FILE`，Manager Server 每次启动都会重新应用该值，并覆盖此命令写入的密钥。这种情况下请直接修改配置值并重启。
+
 ## 命令作用
 
 `cpa-manager-plus reset-admin-key` 会替换 Manager Server SQLite 中的 `settings.admin_credential_v1`，写入新的盐和 HMAC 摘要。

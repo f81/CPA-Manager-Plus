@@ -850,6 +850,61 @@ func TestBootstrapSucceedsAfterExplicitConflictRepair(t *testing.T) {
 	}
 }
 
+func TestRunSyncsStoredAdminCredentialWithConfiguredAdminKey(t *testing.T) {
+	t.Setenv("CPA_UPSTREAM_URL", "")
+	protector, err := security.NewProtector([]byte("0123456789abcdef0123456789abcdef"))
+	if err != nil {
+		t.Fatalf("create protector: %v", err)
+	}
+	st, err := store.Open(filepath.Join(t.TempDir(), "usage.sqlite"), protector)
+	if err != nil {
+		t.Fatalf("open store: %v", err)
+	}
+	t.Cleanup(func() { _ = st.Close() })
+	ctx := context.Background()
+	boot := func(adminKey string) (Result, store.AdminCredential) {
+		t.Helper()
+		result, err := Run(ctx, config.Config{AdminKey: adminKey}, st, false)
+		if err != nil {
+			t.Fatalf("bootstrap with admin key %q: %v", adminKey, err)
+		}
+		credential, ok, err := st.LoadAdminCredential(ctx)
+		if err != nil || !ok {
+			t.Fatalf("load admin credential ok=%v err=%v", ok, err)
+		}
+		return result, credential
+	}
+
+	result, initial := boot("cpamp_first")
+	if !result.AdminCreated || result.AdminRotatedFromEnv || result.GeneratedAdminKey != "" {
+		t.Fatalf("first boot result = %#v", result)
+	}
+
+	result, unchanged := boot("cpamp_first")
+	if result.AdminCreated || result.AdminRotatedFromEnv || unchanged.Salt != initial.Salt {
+		t.Fatalf("unchanged key must not rewrite credential: result=%#v credential=%#v", result, unchanged)
+	}
+
+	result, rotated := boot("cpamp_second")
+	if result.AdminCreated || !result.AdminRotatedFromEnv || result.GeneratedAdminKey != "" {
+		t.Fatalf("rotation boot result = %#v", result)
+	}
+	if !security.VerifyAdminKey(rotated, "cpamp_second") || security.VerifyAdminKey(rotated, "cpamp_first") {
+		t.Fatal("stored credential does not match the newly configured admin key")
+	}
+	if rotated.CreatedAtMS != initial.CreatedAtMS || rotated.RotatedAtMS <= 0 || rotated.Source != "env" {
+		t.Fatalf("rotated credential metadata = %#v", rotated)
+	}
+
+	result, kept := boot("")
+	if result.AdminCreated || result.AdminRotatedFromEnv || result.GeneratedAdminKey != "" {
+		t.Fatalf("boot without configured key result = %#v", result)
+	}
+	if !security.VerifyAdminKey(kept, "cpamp_second") {
+		t.Fatal("boot without configured key must keep the stored credential")
+	}
+}
+
 // TestRunReEncryptsLegacyPlaintextPrefixedWithEnvelopePrefix proves that a
 // historical database whose plaintext CPA Management Key legitimately starts
 // with "enc:v1:" (and therefore collides with the encrypted-value prefix) is

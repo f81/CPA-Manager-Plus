@@ -4,6 +4,8 @@ Use this page when you have lost the CPAMP Admin Key for Full Docker or native M
 
 The reset command modifies the local SQLite database directly. Stop Manager Server before running it so the service does not keep writing to SQLite.
 
+If `CPA_MANAGER_ADMIN_KEY` or `CPA_MANAGER_ADMIN_KEY_FILE` is set, Manager Server re-applies that value on every start and overrides a key written by this command. In that case, change the configured value and restart instead.
+
 ## Shortest Recovery Path
 
 1. Stop Manager Server and back up its data directory.

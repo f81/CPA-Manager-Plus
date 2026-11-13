@@ -3,6 +3,7 @@ package bootstrap
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/seakee/cpa-manager-plus/apps/manager-server/internal/config"
@@ -15,10 +16,14 @@ import (
 type Result struct {
 	GeneratedAdminKey string
 	AdminCreated      bool
-	DataKeyCreated    bool
-	MigratedLegacy    bool
-	HasHistoricalData bool
-	State             store.BootstrapState
+	// AdminRotatedFromEnv reports that an existing stored admin credential was
+	// replaced because the configured CPA_MANAGER_ADMIN_KEY(_FILE) no longer
+	// matched it.
+	AdminRotatedFromEnv bool
+	DataKeyCreated      bool
+	MigratedLegacy      bool
+	HasHistoricalData   bool
+	State               store.BootstrapState
 }
 
 // currentConnectionStorageMigrationVersion is the version of the
@@ -92,40 +97,71 @@ func Run(ctx context.Context, cfg config.Config, st *store.Store, dataKeyCreated
 	// caller instead of locking the operator out with an unknown credential.
 	// A crash between the state write and this write self-heals on the next
 	// boot, which simply generates and discloses a fresh key.
-	adminCreated, generatedAdminKey, err := ensureAdminCredential(ctx, cfg, st)
+	adminResult, err := ensureAdminCredential(ctx, cfg, st)
 	if err != nil {
 		return Result{}, err
 	}
-	result.AdminCreated = adminCreated
-	result.GeneratedAdminKey = generatedAdminKey
+	result.AdminCreated = adminResult.created
+	result.AdminRotatedFromEnv = adminResult.rotatedFromEnv
+	result.GeneratedAdminKey = adminResult.generatedKey
 	return result, nil
 }
 
-func ensureAdminCredential(ctx context.Context, cfg config.Config, st *store.Store) (bool, string, error) {
-	if _, ok, err := st.LoadAdminCredential(ctx); err != nil || ok {
-		return false, "", err
+type adminCredentialResult struct {
+	created        bool
+	rotatedFromEnv bool
+	generatedKey   string
+}
+
+// ensureAdminCredential makes the stored admin credential match the
+// configured admin key. A configured key (CPA_MANAGER_ADMIN_KEY or
+// CPA_MANAGER_ADMIN_KEY_FILE) is authoritative on every boot: when it no
+// longer verifies against the stored hash, the credential is re-hashed and
+// replaced. Without a configured key, an existing credential is kept and a
+// random key is generated only when none exists.
+func ensureAdminCredential(ctx context.Context, cfg config.Config, st *store.Store) (adminCredentialResult, error) {
+	existing, found, err := st.LoadAdminCredential(ctx)
+	if err != nil {
+		return adminCredentialResult{}, err
 	}
-	adminKey := cfg.AdminKey
+	adminKey := strings.TrimSpace(cfg.AdminKey)
+	if found {
+		if adminKey == "" || security.VerifyAdminKey(existing, adminKey) {
+			return adminCredentialResult{}, nil
+		}
+		credential, err := security.NewAdminCredential(adminKey, "env")
+		if err != nil {
+			return adminCredentialResult{}, err
+		}
+		if existing.CreatedAtMS > 0 {
+			credential.CreatedAtMS = existing.CreatedAtMS
+		}
+		credential.RotatedAtMS = time.Now().UnixMilli()
+		if err := st.SaveAdminCredential(ctx, credential); err != nil {
+			return adminCredentialResult{}, err
+		}
+		return adminCredentialResult{rotatedFromEnv: true}, nil
+	}
 	source := "env"
 	if adminKey == "" {
 		generated, err := security.GenerateAdminKey()
 		if err != nil {
-			return false, "", err
+			return adminCredentialResult{}, err
 		}
 		adminKey = generated
 		source = "generated"
 	}
 	credential, err := security.NewAdminCredential(adminKey, source)
 	if err != nil {
-		return false, "", err
+		return adminCredentialResult{}, err
 	}
 	if err := st.SaveAdminCredential(ctx, credential); err != nil {
-		return false, "", err
+		return adminCredentialResult{}, err
 	}
 	if source == "generated" {
-		return true, adminKey, nil
+		return adminCredentialResult{created: true, generatedKey: adminKey}, nil
 	}
-	return true, "", nil
+	return adminCredentialResult{created: true}, nil
 }
 
 func migrateLegacyConfig(ctx context.Context, cfg config.Config, st *store.Store) (bool, error) {

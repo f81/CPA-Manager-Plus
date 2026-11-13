@@ -152,9 +152,12 @@ func runServer() {
 	if err != nil {
 		log.Fatalf("bootstrap manager server: %v", err)
 	}
-	if bootstrapResult.GeneratedAdminKey != "" {
+	switch {
+	case bootstrapResult.GeneratedAdminKey != "":
 		log.Printf("CPA Manager Plus admin key generated: %s", bootstrapResult.GeneratedAdminKey)
-	} else {
+	case bootstrapResult.AdminRotatedFromEnv:
+		log.Printf("CPA Manager Plus admin key updated from CPA_MANAGER_ADMIN_KEY configuration")
+	default:
 		log.Printf("CPA Manager Plus admin credential initialized")
 	}
 	if bootstrapResult.DataKeyCreated {
