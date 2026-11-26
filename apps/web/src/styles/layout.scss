@@ -359,14 +359,10 @@
   text-overflow: ellipsis;
 }
 
-// Entries contributed by plugins: indented under the Plugins item, with the
-// active indicator kept aligned to the sidebar edge.
+// Entries contributed by plugins: indented under the Plugins item. The item box
+// itself stays put, so the active indicator remains aligned to the sidebar edge.
 .nav-item.nav-item-nested {
   padding-left: 24px;
-
-  &.active::before {
-    left: -16px;
-  }
 }
 
 /* ------------------------------------------------------------------ */
