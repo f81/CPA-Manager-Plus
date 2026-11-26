@@ -219,7 +219,8 @@
     "check_connection": "检查连接",
     "refresh_all": "刷新全部",
     "open_github": "打开 GitHub 仓库",
-    "logout": "登出"
+    "logout": "登出",
+    "menu": "菜单"
   },
   "connection": {
     "title": "连接信息",
@@ -254,7 +255,11 @@
     "system_info": "系统信息",
     "system_info_short": "系统",
     "usage_maintenance": "用量维护",
-    "usage_maintenance_short": "维护"
+    "usage_maintenance_short": "维护",
+    "group_overview": "概览",
+    "group_gateway": "网关",
+    "group_system": "系统",
+    "group_plugins": "插件"
   },
   "usage_maintenance": {
     "archive_management": "归档管理",
@@ -942,7 +947,34 @@
     "no_token_mix_data": "暂无 Token 数据",
     "current_config_summary": "当前配置摘要",
     "manage": "管理",
-    "view_full_config": "查看完整配置"
+    "view_full_config": "查看完整配置",
+    "endpoints_title": "API 端点",
+    "endpoints_desc": "将 OpenAI、Anthropic、Gemini 或 Codex 客户端指向此网关。",
+    "endpoints_gateway_address": "网关地址",
+    "endpoints_address_unknown": "网关地址不可用",
+    "endpoints_address_hint": "请先设置网关地址以生成完整 URL。",
+    "endpoints_copy_url": "复制 {{url}}",
+    "endpoints_base_url": "Base URL",
+    "endpoints_auth_hint": "请使用普通的 CPA API Key 进行认证，而不是管理密钥。",
+    "endpoints_manage_keys": "管理 API Key",
+    "endpoints_open_config": "打开配置",
+    "endpoint_group_openai": "OpenAI 兼容",
+    "endpoint_group_anthropic": "Anthropic",
+    "endpoint_group_gemini": "Gemini",
+    "endpoint_group_codex": "Codex CLI",
+    "endpoint_chat_completions": "对话补全",
+    "endpoint_responses": "Responses API",
+    "endpoint_completions": "文本补全",
+    "endpoint_models": "模型列表",
+    "endpoint_messages": "消息",
+    "endpoint_count_tokens": "Token 计数",
+    "endpoint_generate_content": "内容生成",
+    "endpoint_stream_generate_content": "流式内容生成",
+    "endpoint_codex_responses": "Responses",
+    "models_desc": "网关当前提供的模型，点击即可复制模型名称。",
+    "models_copy_all": "全部复制",
+    "models_copied_all": "已复制 {{count}} 个模型名称",
+    "models_other_group": "其他"
   },
   "basic_settings": {
     "title": "基础设置",

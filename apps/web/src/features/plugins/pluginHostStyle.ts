@@ -14,15 +14,17 @@ const PLUGIN_HOST_ATTR = 'data-cpamp-plugin-host';
 const PLUGIN_HOST_SCOPE = `:where(html[${PLUGIN_HOST_ATTR}='true'])`;
 const CUSTOM_PROPERTY_NAME_RE = /^--[a-zA-Z0-9_-]+$/;
 
+// Light baseline mirroring themes.scss, used only until the host's own
+// custom properties can be read from the live document.
 const HOST_STYLE_FALLBACKS: Record<string, string> = {
-  '--app-bg': '#eff2f7',
+  '--app-bg': '#ffffff',
   '--app-surface': '#ffffff',
-  '--app-surface-muted': '#f6faff',
-  '--app-border': 'rgba(15, 23, 42, 0.08)',
-  '--app-text-primary': '#2c3e50',
-  '--app-text-regular': '#5f6c7b',
-  '--app-text-muted': '#8b95a6',
-  '--app-radius-md': '12px',
+  '--app-surface-muted': '#f5f5f5',
+  '--app-border': '#e5e5e5',
+  '--app-text-primary': '#0a0a0a',
+  '--app-text-regular': '#525252',
+  '--app-text-muted': '#737373',
+  '--app-radius-md': '8px',
   '--bg-primary': 'var(--app-surface)',
   '--bg-secondary': 'var(--app-bg)',
   '--bg-tertiary': 'var(--app-surface-muted)',
@@ -30,17 +32,17 @@ const HOST_STYLE_FALLBACKS: Record<string, string> = {
   '--text-secondary': 'var(--app-text-regular)',
   '--text-tertiary': 'var(--app-text-muted)',
   '--border-color': 'var(--app-border)',
-  '--border-hover': 'rgba(64, 158, 255, 0.28)',
-  '--primary-color': '#409eff',
-  '--primary-hover': '#79bbff',
-  '--primary-active': '#337ecc',
+  '--border-hover': '#d4d4d4',
+  '--primary-color': '#ea580a',
+  '--primary-hover': '#f97316',
+  '--primary-active': '#c2410c',
   '--primary-contrast': '#ffffff',
   '--focus-bg': 'color-mix(in srgb, var(--primary-color) 6%, var(--bg-primary))',
   '--focus-border': 'color-mix(in srgb, var(--primary-color) 28%, var(--border-color))',
   '--focus-inset': 'color-mix(in srgb, var(--primary-color) 22%, transparent)',
-  '--danger-color': '#f56c6c',
-  '--warning-color': '#e6a23c',
-  '--success-color': '#67c23a',
+  '--danger-color': '#dc2626',
+  '--warning-color': '#d97706',
+  '--success-color': '#16a34a',
 };
 
 const readFrameDocument = (iframe: HTMLIFrameElement): Document | null => {

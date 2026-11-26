@@ -551,7 +551,7 @@
 }
 
 .summaryAccentBlue {
-  --summary-accent: #3b82f6;
+  --summary-accent: #6366f1;
 }
 
 .summaryAccentCyan {
@@ -747,7 +747,7 @@
   padding: 12px;
 
   b {
-    color: #0f172a;
+    color: var(--text-primary);
     font-size: 13px;
   }
 }
@@ -767,7 +767,7 @@
   }
 
   strong {
-    color: #0f172a;
+    color: var(--text-primary);
     font-weight: 800;
   }
 }
@@ -1567,7 +1567,7 @@
 }
 
 .insightinfo {
-  color: #2563eb;
+  color: var(--data-accent-dark-2);
 }
 
 .insightsuccess {
@@ -2036,7 +2036,7 @@
 }
 
 .heatmapDetailMetricBlue {
-  --heatmap-detail-accent: #3b82f6;
+  --heatmap-detail-accent: #6366f1;
 }
 
 .heatmapDetailMetricTeal {

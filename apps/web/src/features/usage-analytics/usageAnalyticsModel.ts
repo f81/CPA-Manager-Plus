@@ -514,7 +514,7 @@ export const USAGE_METRICS: UsageMetricDefinition[] = [
   {
     key: 'requestCount',
     labelKey: 'usage_analytics.metric_request_count',
-    color: '#2563eb',
+    color: '#ea580a',
     axis: 'requests',
   },
   {
@@ -526,7 +526,7 @@ export const USAGE_METRICS: UsageMetricDefinition[] = [
   {
     key: 'inputTokens',
     labelKey: 'usage_analytics.metric_input_tokens',
-    color: '#3b82f6',
+    color: '#6366f1',
     axis: 'tokens',
   },
   {
@@ -1950,7 +1950,7 @@ export const buildEntityTrendSeries = (
   shareRows = rows
 ): UsageEntityTrendSeries[] => {
   const total = sumUsageRows(shareRows, metric);
-  const colors = ['#2563eb', '#0ea5a7', '#f59e0b', '#ef4444', '#64748b'];
+  const colors = ['#ea580a', '#0ea5a7', '#6366f1', '#ef4444', '#737373'];
   return rows
     .filter((row) => usageRankMetricValue(row, metric) > 0)
     .slice(0, limit)
@@ -1995,7 +1995,7 @@ export const buildApiKeyTrendSeries = (
     }
     valuesByBucket.set(point.bucketMs, point);
   });
-  const colors = ['#2563eb', '#0ea5a7', '#f59e0b', '#ef4444', '#64748b'];
+  const colors = ['#ea580a', '#0ea5a7', '#6366f1', '#ef4444', '#737373'];
   return rows
     .filter((row) => {
       const apiKeyHash = normalizeApiKeyHash(row.apiKeyHash || row.id);
@@ -2047,7 +2047,7 @@ export const buildSelectedApiKeyTrendSeries = (
     {
       id: selectedApiKey.apiKeyHash || selectedApiKey.id,
       label: selectedApiKey.label,
-      color: '#2563eb',
+      color: '#ea580a',
       points: timeline
         .slice()
         .sort((left, right) => left.bucketMs - right.bucketMs)
@@ -2082,7 +2082,7 @@ export const buildSelectedCredentialTrendSeries = (
     {
       id: selectedCredential.id,
       label: selectedCredential.label,
-      color: '#2563eb',
+      color: '#ea580a',
       points,
     },
   ];

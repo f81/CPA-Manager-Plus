@@ -75,7 +75,7 @@ describe('plugin host style bridge', () => {
     expect(lightStyle).toContain(':where(p, span, label, small, li, dt, dd)');
     expect(lightStyle).toContain('color-scheme: light;');
     expect(darkStyle).toContain('color-scheme: dark;');
-    expect(lightStyle).toContain('--app-bg: #eff2f7;');
+    expect(lightStyle).toContain('--app-bg: #ffffff;');
   });
 
   it('places the host style before the first plugin stylesheet', () => {

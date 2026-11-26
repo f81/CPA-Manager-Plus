@@ -109,19 +109,10 @@
   align-items: center;
   gap: 8px;
   padding: 10px 12px;
-  border-radius: 999px;
-  --glass-blur: 12px;
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-backdrop-filter);
-  -webkit-backdrop-filter: var(--glass-backdrop-filter);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow);
-}
-
-:global([data-theme='dark']) {
-  .floatingActionSurface {
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
-  }
+  border-radius: var(--app-radius-lg);
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-popover);
 }
 
 @media (max-width: 1200px) {

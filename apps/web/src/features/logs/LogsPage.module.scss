@@ -540,9 +540,9 @@
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
     'Courier New', monospace;
   font-size: 11px;
-  color: #0891b2;
-  background: rgba(8, 145, 178, 0.1);
-  border-color: rgba(8, 145, 178, 0.25);
+  color: var(--text-secondary);
+  background: var(--surface-muted);
+  border-color: var(--border);
 }
 
 .statusBadge {

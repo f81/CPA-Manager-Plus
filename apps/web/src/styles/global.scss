@@ -10,11 +10,15 @@
 @use './layout.scss';
 
 body {
-  background-color: var(--app-bg);
-  color: var(--text-primary);
-  transition:
-    background-color $transition-normal,
-    color $transition-normal;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: $font-family;
+  font-size: 14px;
+  line-height: 1.5;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 html,
@@ -39,22 +43,31 @@ body.modal-open .content {
   min-height: 100%;
 }
 
+h1,
+h2,
+h3,
+h4 {
+  letter-spacing: -0.01em;
+}
+
 // 滚动条样式
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border-color);
+  background: var(--neutral-300);
+  border: 3px solid transparent;
   border-radius: $radius-full;
+  background-clip: content-box;
 
   &:hover {
-    background: var(--border-hover);
+    background-color: var(--neutral-400);
   }
 }
 
@@ -72,6 +85,17 @@ body.modal-open .content {
 
 .text-ellipsis {
   @include text-ellipsis;
+}
+
+.mono {
+  font-family: $font-mono;
+  font-size: 0.9231em; // 13px when the base size is 14px
+}
+
+// 统一的键盘焦点环
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
 }
 
 // 通用过渡

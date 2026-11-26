@@ -1,25 +1,28 @@
 /**
  * SCSS 变量定义
+ *
+ * 颜色值必须与 themes.scss 的 token 保持一致；运行时请优先使用 CSS 变量，
+ * 这里的 SCSS 变量只用于无法引用 CSS 变量的场景（例如 rgba() 参与 SCSS 计算）。
  */
 
-// 颜色
-$primary-color: #3b82f6;
-$success-color: #22c55e;
-$warning-color: #f59e0b;
-$error-color: #ef4444;
-$info-color: #64748b;
+// 颜色（与 themes.scss 的 --brand / 语义色一致）
+$primary-color: #ea580a;
+$success-color: #16a34a;
+$warning-color: #d97706;
+$error-color: #dc2626;
+$info-color: #525252;
 
-// 灰阶
-$gray-50: #f9fafb;
-$gray-100: #f3f4f6;
-$gray-200: #e5e7eb;
-$gray-300: #d1d5db;
-$gray-400: #9ca3af;
-$gray-500: #6b7280;
-$gray-600: #4b5563;
-$gray-700: #374151;
-$gray-800: #1f2937;
-$gray-900: #111827;
+// 中性灰阶（neutral）
+$gray-50: #fafafa;
+$gray-100: #f5f5f5;
+$gray-200: #e5e5e5;
+$gray-300: #d4d4d4;
+$gray-400: #a3a3a3;
+$gray-500: #737373;
+$gray-600: #525252;
+$gray-700: #404040;
+$gray-800: #262626;
+$gray-900: #171717;
 
 // 间距
 $spacing-xs: 4px;
@@ -29,16 +32,20 @@ $spacing-lg: 24px;
 $spacing-xl: 32px;
 $spacing-2xl: 48px;
 
-// 圆角
-$radius-sm: 4px;
+// 圆角（与 --radius: 0.625rem 对应）
+$radius-sm: 6px;
 $radius-md: 8px;
 $radius-lg: 12px;
 $radius-full: 9999px;
 
 // 阴影
 $shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-$shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-$shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+$shadow-md:
+  0 1px 3px 0 rgb(0 0 0 / 0.1),
+  0 1px 2px -1px rgb(0 0 0 / 0.1);
+$shadow-lg:
+  0 4px 16px -2px rgb(0 0 0 / 0.12),
+  0 0 0 1px rgb(0 0 0 / 0.03);
 
 // 过渡
 $transition-fast: 150ms ease;
@@ -56,7 +63,16 @@ $z-modal: 2000;
 $z-notification: 3000;
 
 // 字体
-$font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
-  'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+$font-family:
+  ui-sans-serif,
+  system-ui,
+  -apple-system,
+  BlinkMacSystemFont,
+  'Segoe UI',
+  Roboto,
+  'Helvetica Neue',
+  Arial,
+  'Noto Sans',
+  sans-serif;
 
-$font-mono: 'Courier New', Courier, monospace;
+$font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;

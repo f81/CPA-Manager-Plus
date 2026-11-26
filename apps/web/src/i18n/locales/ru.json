@@ -225,7 +225,8 @@
     "check_connection": "Проверить подключение",
     "refresh_all": "Обновить всё",
     "open_github": "Открыть репозиторий GitHub",
-    "logout": "Выйти"
+    "logout": "Выйти",
+    "menu": "Меню"
   },
   "connection": {
     "title": "Информация о подключении",
@@ -260,7 +261,11 @@
     "system_info": "Информация системы",
     "system_info_short": "Система",
     "usage_maintenance": "Обслуживание использования",
-    "usage_maintenance_short": "Обслуживание"
+    "usage_maintenance_short": "Обслуживание",
+    "group_overview": "Обзор",
+    "group_gateway": "Шлюз",
+    "group_system": "Система",
+    "group_plugins": "Плагины"
   },
   "usage_maintenance": {
     "archive_management": "Управление архивами",
@@ -948,7 +953,34 @@
     "no_token_mix_data": "Нет данных токенов",
     "current_config_summary": "Сводка конфигурации",
     "manage": "Управлять",
-    "view_full_config": "Вся конфигурация"
+    "view_full_config": "Вся конфигурация",
+    "endpoints_title": "API-эндпоинты",
+    "endpoints_desc": "Подключите клиенты OpenAI, Anthropic, Gemini или Codex к этому шлюзу.",
+    "endpoints_gateway_address": "Адрес шлюза",
+    "endpoints_address_unknown": "Адрес шлюза недоступен",
+    "endpoints_address_hint": "Укажите адрес шлюза, чтобы получить полные URL.",
+    "endpoints_copy_url": "Копировать {{url}}",
+    "endpoints_base_url": "Базовый URL",
+    "endpoints_auth_hint": "Используйте обычный API-ключ CPA, а не ключ управления.",
+    "endpoints_manage_keys": "Управление API-ключами",
+    "endpoints_open_config": "Открыть конфигурацию",
+    "endpoint_group_openai": "Совместимо с OpenAI",
+    "endpoint_group_anthropic": "Anthropic",
+    "endpoint_group_gemini": "Gemini",
+    "endpoint_group_codex": "Codex CLI",
+    "endpoint_chat_completions": "Chat Completions",
+    "endpoint_responses": "Responses API",
+    "endpoint_completions": "Text Completions",
+    "endpoint_models": "Список моделей",
+    "endpoint_messages": "Messages",
+    "endpoint_count_tokens": "Подсчёт токенов",
+    "endpoint_generate_content": "GenerateContent",
+    "endpoint_stream_generate_content": "Потоковый GenerateContent",
+    "endpoint_codex_responses": "Responses",
+    "models_desc": "Модели, которые шлюз предоставляет прямо сейчас. Нажмите на модель, чтобы скопировать её имя.",
+    "models_copy_all": "Копировать все",
+    "models_copied_all": "Скопировано имён моделей: {{count}}",
+    "models_other_group": "Другие"
   },
   "basic_settings": {
     "title": "Основные настройки",

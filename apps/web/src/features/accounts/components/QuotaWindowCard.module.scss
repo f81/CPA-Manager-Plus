@@ -48,7 +48,7 @@
   height: 30px;
   border-radius: $radius-md;
   background: color-mix(in srgb, var(--color-primary) 10%, transparent);
-  color: var(--color-primary, var(--primary-color, #1677ff));
+  color: var(--color-primary, var(--primary-color, #ea580a));
 
   &[data-quota-window-icon='payg'],
   &[data-quota-window-icon='billing'] {
@@ -142,7 +142,7 @@
   display: flex;
   align-items: baseline;
   gap: 5px;
-  color: var(--color-primary, var(--primary-color, #1677ff));
+  color: var(--color-primary, var(--primary-color, #ea580a));
   white-space: nowrap;
 
   span {
@@ -204,7 +204,7 @@
 .compareColumnPrediction {
   background: color-mix(
     in srgb,
-    var(--color-primary, var(--primary-color, #1677ff)) 5%,
+    var(--color-primary, var(--primary-color, #ea580a)) 5%,
     var(--color-surface, #fff)
   );
 }
@@ -221,7 +221,7 @@
 
   svg {
     flex: 0 0 auto;
-    color: var(--color-primary, var(--primary-color, #1677ff));
+    color: var(--color-primary, var(--primary-color, #ea580a));
   }
 }
 
@@ -263,9 +263,9 @@
 }
 
 .rowIconBlue {
-  border-color: color-mix(in srgb, var(--data-blue-base) 34%, transparent);
-  background: var(--data-blue-light-9);
-  color: var(--data-blue-base);
+  border-color: color-mix(in srgb, var(--data-accent-base) 34%, transparent);
+  background: var(--data-accent-light-9);
+  color: var(--data-accent-base);
 }
 
 .rowIconGreen {

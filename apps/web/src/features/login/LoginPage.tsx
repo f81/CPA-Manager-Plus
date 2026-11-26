@@ -37,14 +37,8 @@ import {
 import { LANGUAGE_LABEL_KEYS, LANGUAGE_ORDER } from '@/utils/constants';
 import { isSupportedLanguage } from '@/utils/language';
 import {
-  CPAMP_HORIZONTAL_LOGO_ON_DARK_PNG_SRC_SET,
-  CPAMP_HORIZONTAL_LOGO_ON_DARK_PNG_URL,
-  CPAMP_HORIZONTAL_LOGO_PNG_SRC_SET,
-  CPAMP_HORIZONTAL_LOGO_PNG_URL,
-  CPAMP_VERTICAL_LOGO_ON_DARK_URL,
-  CPAMP_VERTICAL_LOGO_ON_DARK_SRC_SET,
-  CPAMP_VERTICAL_LOGO_SRC_SET,
-  CPAMP_VERTICAL_LOGO_URL,
+  CPAMP_HORIZONTAL_LOGO_BLACK_URL,
+  CPAMP_HORIZONTAL_LOGO_WHITE_URL,
 } from '@/assets/brand';
 import type { ApiError } from '@/types';
 import { resolveUsageServiceLoginMode } from './loginMode';
@@ -569,14 +563,12 @@ export function LoginPage() {
         {showSplash ? (
           <div className={styles.splashContent}>
             <img
-              src={CPAMP_VERTICAL_LOGO_URL}
-              srcSet={CPAMP_VERTICAL_LOGO_SRC_SET}
+              src={CPAMP_HORIZONTAL_LOGO_BLACK_URL}
               alt="CPA Manager Plus"
               className={[styles.splashLogo, styles.splashLogoLight].join(' ')}
             />
             <img
-              src={CPAMP_VERTICAL_LOGO_ON_DARK_URL}
-              srcSet={CPAMP_VERTICAL_LOGO_ON_DARK_SRC_SET}
+              src={CPAMP_HORIZONTAL_LOGO_WHITE_URL}
               alt="CPA Manager Plus"
               className={[styles.splashLogo, styles.splashLogoDark].join(' ')}
             />
@@ -593,14 +585,12 @@ export function LoginPage() {
             <div className={`${styles.loginCard} ${usageServiceNeedsSetup ? styles.setupCard : ''}`}>
               <div className={styles.cardBranding}>
                 <img
-                  src={CPAMP_HORIZONTAL_LOGO_PNG_URL}
-                  srcSet={CPAMP_HORIZONTAL_LOGO_PNG_SRC_SET}
+                  src={CPAMP_HORIZONTAL_LOGO_BLACK_URL}
                   alt="CPA Manager Plus"
                   className={[styles.brandLogo, styles.brandLogoLight].join(' ')}
                 />
                 <img
-                  src={CPAMP_HORIZONTAL_LOGO_ON_DARK_PNG_URL}
-                  srcSet={CPAMP_HORIZONTAL_LOGO_ON_DARK_PNG_SRC_SET}
+                  src={CPAMP_HORIZONTAL_LOGO_WHITE_URL}
                   alt="CPA Manager Plus"
                   className={[styles.brandLogo, styles.brandLogoDark].join(' ')}
                 />

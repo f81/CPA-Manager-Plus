@@ -518,6 +518,12 @@ export async function handleDemoApiRequest<T = unknown>(
     return getCurrentDemoConfigYaml() as T;
   }
 
+  // Mirrors the real management API envelope that apiKeysApi.list() validates.
+  if (pathname === '/api-keys') {
+    if (method === 'get') return { 'api-keys': rawConfig['api-keys'] ?? [] } as T;
+    return ok as T;
+  }
+
   const providerKey = providerEndpointKeys[pathname];
   if (providerKey) {
     if (method === 'get') return rawConfig[providerKey] as T;

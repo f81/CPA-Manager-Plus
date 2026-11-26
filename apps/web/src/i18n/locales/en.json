@@ -221,7 +221,8 @@
     "check_connection": "Check Connection",
     "refresh_all": "Refresh All",
     "open_github": "Open GitHub repository",
-    "logout": "Logout"
+    "logout": "Logout",
+    "menu": "Menu"
   },
   "connection": {
     "title": "Connection Information",
@@ -256,7 +257,11 @@
     "system_info": "System Info",
     "system_info_short": "System",
     "usage_maintenance": "Usage Maintenance",
-    "usage_maintenance_short": "Maintenance"
+    "usage_maintenance_short": "Maintenance",
+    "group_overview": "Overview",
+    "group_gateway": "Gateway",
+    "group_system": "System",
+    "group_plugins": "Plugins"
   },
   "usage_maintenance": {
     "archive_management": "Archive management",
@@ -944,7 +949,34 @@
     "no_token_mix_data": "No token data",
     "current_config_summary": "Current Config Summary",
     "manage": "Manage",
-    "view_full_config": "View Full Config"
+    "view_full_config": "View Full Config",
+    "endpoints_title": "API Endpoints",
+    "endpoints_desc": "Point your OpenAI, Anthropic, Gemini or Codex clients at this gateway.",
+    "endpoints_gateway_address": "Gateway address",
+    "endpoints_address_unknown": "Gateway address unavailable",
+    "endpoints_address_hint": "Set the gateway address to resolve full URLs.",
+    "endpoints_copy_url": "Copy {{url}}",
+    "endpoints_base_url": "Base URL",
+    "endpoints_auth_hint": "Authenticate with a regular CPA API key, not the management key.",
+    "endpoints_manage_keys": "Manage API keys",
+    "endpoints_open_config": "Open Config",
+    "endpoint_group_openai": "OpenAI compatible",
+    "endpoint_group_anthropic": "Anthropic",
+    "endpoint_group_gemini": "Gemini",
+    "endpoint_group_codex": "Codex CLI",
+    "endpoint_chat_completions": "Chat completions",
+    "endpoint_responses": "Responses API",
+    "endpoint_completions": "Text completions",
+    "endpoint_models": "List models",
+    "endpoint_messages": "Messages",
+    "endpoint_count_tokens": "Count tokens",
+    "endpoint_generate_content": "Generate content",
+    "endpoint_stream_generate_content": "Stream generate content",
+    "endpoint_codex_responses": "Responses",
+    "models_desc": "Models the gateway is serving right now. Click one to copy its name.",
+    "models_copy_all": "Copy all",
+    "models_copied_all": "Copied {{count}} model names",
+    "models_other_group": "Other"
   },
   "basic_settings": {
     "title": "Basic Settings",

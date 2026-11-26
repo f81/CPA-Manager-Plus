@@ -9,9 +9,7 @@ import { DashboardPage } from './dashboard/DashboardPage';
 import { AccountActionCandidatesPage } from './monitoring/AccountActionCandidatesPage';
 import { DatabaseStatusCard } from './system/components/DatabaseStatusCard';
 import { VersionCard } from './dashboard/components/VersionCard';
-import { UsageMetricsCard } from './dashboard/components/UsageMetricsCard';
-import { TrafficOverviewCard } from './dashboard/components/TrafficOverviewCard';
-import { HealthAlertsCard } from './dashboard/components/HealthAlertsCard';
+import { CopyButton } from '@/components/ui/CopyButton';
 import { AccountProcessingPolicySection } from './config/components/AccountProcessingPolicySection';
 import { ToggleSwitch } from '@/components/ui/ToggleSwitch';
 import { DropdownMenu } from '@/components/ui/DropdownMenu';
@@ -37,12 +35,9 @@ const mocks = vi.hoisted(() => ({
   errorLogs: vi.fn(),
   status: vi.fn(),
   managerConfig: vi.fn(),
-  aliases: vi.fn(),
-  meta: vi.fn(),
   candidates: vi.fn(),
   ignoreCandidate: vi.fn(),
   deleteCandidate: vi.fn(),
-  usageSummary: { loading: false, summary: null as object | null, error: '' },
   clearLogs: vi.fn(),
   confirmation: vi.fn(),
   keys: vi.fn(),
@@ -133,28 +128,8 @@ vi.mock('@/services/api/usageService', () => ({
     ignoreAccountActionCandidate: mocks.ignoreCandidate,
     deleteAccountActionCandidateAuthFile: mocks.deleteCandidate,
     getManagerConfig: mocks.managerConfig,
-    getApiKeyAliases: mocks.aliases,
     getAccountProcessingPolicy: mocks.policy, updateAccountProcessingPolicy: mocks.updatePolicy,
   },
-}));
-vi.mock('./monitoring/services/monitoringMetaService', () => ({
-  loadMonitoringMetaPayload: mocks.meta,
-}));
-vi.mock('./dashboard/hooks/useDashboardUsageSummary', () => ({
-  useDashboardUsageSummary: () => ({
-    enabled: true,
-    ...mocks.usageSummary,
-    recentFailures: [],
-    topModels: [],
-    modelCostRank: [],
-    trafficTimeline: [],
-    hourlyActivity: [],
-    tokenMix: [],
-    channelHealth: [],
-    failureSources: [],
-    serviceBase: mocks.managerBase,
-    refresh: mocks.noop,
-  }),
 }));
 vi.mock('./system/ManagerUpdates', () => ({ useManagerUpdates: () => ({ available: false }) }));
 vi.mock('./system/components/DatabaseStatusCard', () => ({
@@ -185,10 +160,6 @@ vi.mock('./dashboard/components/VersionCard', () => ({
     </section>
   ),
 }));
-vi.mock('./dashboard/components/UsageMetricsCard', () => ({ UsageMetricsCard: () => null }));
-vi.mock('./dashboard/components/CollectorStatusCard', () => ({ CollectorStatusCard: () => null }));
-vi.mock('./dashboard/components/HealthAlertsCard', () => ({ HealthAlertsCard: () => null }));
-vi.mock('./dashboard/components/TrafficOverviewCard', () => ({ TrafficOverviewCard: () => null }));
 vi.mock('./plugins/PluginStorePage', () => ({ PluginStorePage: () => null }));
 vi.mock('./plugins/pluginHostStyle', () => ({ createPluginHostStyleBridge: () => null }));
 vi.mock('./logs/hooks/useLogScroller', () => ({
@@ -235,7 +206,6 @@ beforeEach(() => {
   });
   mocks.auth.managementKey = 'a';
   mocks.auth.apiBase = 'https://a.test';
-  mocks.usageSummary = { loading: false, summary: null, error: '' };
   mocks.auth.connectionStatus = 'connected';
   mocks.auth.supportsPlugin = true;
   mocks.managerBase = 'https://manager.test';
@@ -256,14 +226,6 @@ beforeEach(() => {
   mocks.status.mockReset();
   mocks.managerConfig.mockReset().mockResolvedValue({
     config: { cpaConnection: { cpaBaseUrl: 'https://cpa.last-good' } },
-  });
-  mocks.aliases.mockReset().mockResolvedValue({ items: [] });
-  mocks.meta.mockReset().mockResolvedValue({
-    authFiles: [],
-    authFilesLoaded: true,
-    channels: [],
-    channelsLoaded: true,
-    error: '',
   });
   mocks.candidates.mockReset();
   mocks.confirmation.mockReset();
@@ -412,14 +374,6 @@ describe('page refresh interactions', () => {
     expect(output).not.toContain('plugin_management.no_plugins');
   });
 
-  it('does not render dashboard no-data regions after a bootstrap summary failure', async () => {
-    mocks.usageSummary = { loading: false, summary: null, error: 'summary bootstrap offline' };
-    await mount(<DashboardPage />);
-    expect(renderer.root.findAllByType(UsageMetricsCard)).toHaveLength(1);
-    expect(renderer.root.findAllByType(TrafficOverviewCard)).toHaveLength(0);
-    expect(renderer.root.findAllByType(HealthAlertsCard)).toHaveLength(0);
-  });
-
   it('keeps manager CPA base unknown when manager config bootstrap fails', async () => {
     mocks.managerConfig.mockRejectedValueOnce(new Error('manager config bootstrap offline'));
     await mount(<DashboardPage />);
@@ -427,121 +381,47 @@ describe('page refresh interactions', () => {
 
     expect(version.props.cpaBase).toBe('');
     expect(text(renderer.root)).toContain('notification.refresh_failed');
+    // Paths stay discoverable, but no gateway host is fabricated.
+    const copiedUrls = renderer.root.findAllByType(CopyButton).map((node) => node.props.value);
+    expect(copiedUrls).toContain('/v1/chat/completions');
+    expect(copiedUrls.every((value: string) => !/^https?:/i.test(value))).toBe(true);
   });
 
-  it('uses channel config fallback only until a successful remote snapshot exists', async () => {
-    const fallbackChannel = {
-      key: 'fallback:0',
-      name: 'fallback',
-      baseUrl: 'https://fallback.test',
-      host: 'fallback.test',
-      disabled: false,
-      authIndices: ['auth-fallback'],
-      modelNames: [],
-    };
-    mocks.meta.mockResolvedValueOnce({
-      authFiles: [],
-      authFilesLoaded: true,
-      channels: [fallbackChannel],
-      channelsLoaded: false,
-      error: 'channels offline',
-    });
-
-    await mount(<DashboardPage />);
-    const health = () => renderer.root.findByType(HealthAlertsCard);
-    expect(health().props.channelByAuthIndex.has('auth-fallback')).toBe(true);
-    expect(text(renderer.root)).toContain('notification.refresh_failed');
-
-    mocks.meta.mockResolvedValueOnce({
-      authFiles: [],
-      authFilesLoaded: true,
-      channels: [],
-      channelsLoaded: true,
-      error: '',
-    });
-    await act(async () => { await refresh(); });
-    expect(health().props.channelByAuthIndex.has('auth-fallback')).toBe(false);
-
-    mocks.meta.mockResolvedValueOnce({
-      authFiles: [],
-      authFilesLoaded: true,
-      channels: [fallbackChannel],
-      channelsLoaded: false,
-      error: 'channels offline again',
-    });
-    await act(async () => { await refresh(); });
-    expect(health().props.channelByAuthIndex.has('auth-fallback')).toBe(false);
-    expect(text(renderer.root)).toContain('notification.refresh_failed');
-  });
-
-  it('retains dashboard auxiliary snapshots across real partial meta refresh failures', async () => {
-    mocks.meta.mockResolvedValue({
-      authFiles: [
-        {
-          name: 'retained.json',
-          type: 'codex',
-          provider: 'codex',
-          authIndex: 'auth-retained',
-          account: 'retained@example.com',
-        },
-      ],
-      authFilesLoaded: true,
-      channels: [
-        {
-          key: 'retained:0',
-          name: 'retained',
-          baseUrl: 'https://channel.test',
-          host: 'channel.test',
-          disabled: false,
-          authIndices: ['auth-retained'],
-          modelNames: [],
-        },
-      ],
-      channelsLoaded: true,
-      error: '',
-    });
-    mocks.aliases.mockResolvedValue({
-      items: [{ apiKeyHash: 'retained-hash', alias: 'Retained key' }],
-    });
-
+  it('retains the manager CPA base across a partial status refresh failure', async () => {
     await mount(<DashboardPage />);
     const version = () => renderer.root.findByType(VersionCard);
-    const health = () => renderer.root.findByType(HealthAlertsCard);
     expect(version().props.cpaBase).toBe('https://cpa.last-good');
-    expect(health().props.authFileMap.has('auth-retained')).toBe(true);
-    expect(health().props.channelByAuthIndex.has('auth-retained')).toBe(true);
-    expect(health().props.apiKeyAliasMap.has('retained-hash')).toBe(true);
 
     mocks.managerConfig.mockRejectedValueOnce(new Error('manager config offline'));
-    mocks.meta.mockResolvedValueOnce({
-      authFiles: [],
-      authFilesLoaded: false,
-      channels: [],
-      channelsLoaded: false,
-      error: 'meta offline',
-    });
-    mocks.aliases.mockRejectedValueOnce(new Error('aliases offline'));
     await act(async () => { await refresh(); });
 
     expect(version().props.cpaBase).toBe('https://cpa.last-good');
-    expect(health().props.authFileMap.has('auth-retained')).toBe(true);
-    expect(health().props.channelByAuthIndex.has('auth-retained')).toBe(true);
-    expect(health().props.apiKeyAliasMap.has('retained-hash')).toBe(true);
     expect(text(renderer.root)).toContain('notification.refresh_failed');
   });
 
-  it('uses a successful empty dashboard summary during background refresh', async () => {
+  it('resolves every gateway endpoint against the manager CPA base', async () => {
     await mount(<DashboardPage />);
-    mocks.usageSummary.loading = true;
-    await act(async () => { renderer.update(<DashboardPage />); });
-    expect(renderer.root.findAllByType(UsageMetricsCard).every(n => n.props.loading)).toBe(true);
-    mocks.usageSummary.summary = { window: { now_ms: 1 } };
-    await act(async () => { renderer.update(<DashboardPage />); });
-    for (const component of [UsageMetricsCard, TrafficOverviewCard, HealthAlertsCard]) {
-      const cards = renderer.root.findAllByType(component);
-      expect(cards.length).toBeGreaterThan(0);
-      expect(cards.every(n => n.props.loading === false)).toBe(true);
-    }
+    const output = text(renderer.root);
+    // The base URL each client family is configured with.
+    expect(output).toContain('https://cpa.last-good/v1');
+    expect(output).toContain('https://cpa.last-good/v1beta');
+    expect(output).toContain('https://cpa.last-good/backend-api/codex');
+    expect(output).not.toContain('https://a.test');
+
+    const copiedUrls = renderer.root.findAllByType(CopyButton).map((node) => node.props.value);
+    expect(copiedUrls).toEqual(
+      expect.arrayContaining([
+        'https://cpa.last-good',
+        'https://cpa.last-good/v1',
+        'https://cpa.last-good/v1/chat/completions',
+        'https://cpa.last-good/v1/completions',
+        'https://cpa.last-good/v1/responses',
+        'https://cpa.last-good/v1/models',
+        'https://cpa.last-good/v1/messages',
+        'https://cpa.last-good/v1beta/models/{model}:generateContent',
+        'https://cpa.last-good/backend-api/codex/responses',
+      ])
+    );
   });
 
   it('distinguishes error-log bootstrap failure from a successfully loaded zero count', async () => {

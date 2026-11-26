@@ -25,8 +25,11 @@ export type DataPalette = {
   };
 };
 
+// Canvas charts cannot read CSS variables, so these mirror themes.scss literally.
+// `blue` is the cool end of the data palette (an indigo, not the former UI blue);
+// the brand accent is intentionally not part of the categorical data palette.
 export const lightDataPalette: DataPalette = {
-  blue: '#3b82f6',
+  blue: '#6366f1',
   emerald: '#10b981',
   green: '#22c55e',
   amber: '#f59e0b',
@@ -36,22 +39,22 @@ export const lightDataPalette: DataPalette = {
   teal: '#14b8a6',
   slate: '#64748b',
   slateMuted: '#94a3b8',
-  healthWarn: '#a3e635',
+  healthWarn: '#65a30d',
   surface: {
-    axisLabel: '#64748b',
-    axisLine: '#e2e8f0',
-    axisPointer: '#94a3b8',
-    splitLine: '#e8edf5',
-    tooltipBackground: 'rgba(255,255,255,0.96)',
-    tooltipBorder: '#dbe3ef',
-    tooltipMuted: '#64748b',
-    tooltipShadow: 'box-shadow: 0 16px 36px rgba(15,23,42,0.14);',
-    tooltipText: '#0f172a',
+    axisLabel: '#737373',
+    axisLine: '#e5e5e5',
+    axisPointer: '#a3a3a3',
+    splitLine: '#f0f0f0',
+    tooltipBackground: 'rgba(255,255,255,0.98)',
+    tooltipBorder: '#e5e5e5',
+    tooltipMuted: '#737373',
+    tooltipShadow: 'box-shadow: 0 8px 24px rgba(10,10,10,0.1);',
+    tooltipText: '#0a0a0a',
   },
 };
 
 export const darkDataPalette: DataPalette = {
-  blue: '#60a5fa',
+  blue: '#818cf8',
   emerald: '#34d399',
   green: '#4ade80',
   amber: '#fbbf24',
@@ -64,14 +67,14 @@ export const darkDataPalette: DataPalette = {
   healthWarn: '#bef264',
   surface: {
     axisLabel: '#a3a3a3',
-    axisLine: 'rgba(255,255,255,0.12)',
-    axisPointer: '#7a7a7a',
-    splitLine: 'rgba(255,255,255,0.1)',
-    tooltipBackground: 'rgba(24,28,40,0.96)',
+    axisLine: 'rgba(255,255,255,0.1)',
+    axisPointer: '#8a8a8a',
+    splitLine: 'rgba(255,255,255,0.08)',
+    tooltipBackground: 'rgba(20,20,20,0.98)',
     tooltipBorder: 'rgba(255,255,255,0.12)',
     tooltipMuted: '#a3a3a3',
-    tooltipShadow: 'box-shadow: 0 16px 36px rgba(0,0,0,0.38);',
-    tooltipText: '#e5e5e5',
+    tooltipShadow: 'box-shadow: 0 8px 24px rgba(0,0,0,0.5);',
+    tooltipText: '#fafafa',
   },
 };
 

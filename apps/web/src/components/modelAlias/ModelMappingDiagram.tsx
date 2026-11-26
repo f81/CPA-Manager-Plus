@@ -34,8 +34,8 @@ export interface ModelMappingDiagramProps {
 }
 
 const PROVIDER_COLORS = [
-  '#409eff', '#67c23a', '#e6a23c', '#f56c6c',
-  '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'
+  '#ea580a', '#16a34a', '#d97706', '#dc2626',
+  '#7c3aed', '#db2777', '#0891b2', '#65a30d'
 ];
 
 function getProviderColor(provider: string): string {

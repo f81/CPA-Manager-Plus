@@ -1,53 +1,56 @@
-@use '../../styles/variables.scss' as *;
+/*
+ * Login / first-run setup.
+ * A single centred card on a plain background, matching the app shell.
+ */
 
 .container {
-  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 100vh;
   padding: 72px 20px 32px;
-  background: transparent;
+  background: var(--background);
 
   @media (max-width: $breakpoint-mobile) {
     padding: 76px 14px 24px;
   }
 }
 
+/* ---------- Top-right tools ---------- */
+
 .toolBar {
   position: fixed;
-  top: 24px;
-  right: 24px;
+  top: 16px;
+  right: 16px;
   z-index: 20;
   display: flex;
   align-items: center;
-  gap: 10px;
-
-  @media (max-width: $breakpoint-mobile) {
-    top: 16px;
-    right: 16px;
-  }
+  gap: 4px;
 }
 
 .toolButton {
-  width: 38px;
-  min-height: 38px;
-  border: 1px solid var(--glass-border);
-  border-radius: 10px;
-  background: var(--app-surface-muted);
-  color: var(--text-primary);
-  box-shadow: var(--glass-shadow);
-  backdrop-filter: var(--glass-backdrop-filter);
-  -webkit-backdrop-filter: var(--glass-backdrop-filter);
   display: inline-grid;
   place-items: center;
+  width: 36px;
+  min-height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--app-radius-md);
+  background: transparent;
+  color: var(--foreground-muted);
   cursor: pointer;
   transition:
-    background 0.2s ease,
-    transform 0.2s ease;
+    background-color $transition-fast,
+    color $transition-fast;
 
   &:hover {
-    background: var(--app-surface-strong);
-    transform: translateY(-1px);
+    background: var(--accent);
+    color: var(--foreground);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 1px;
   }
 }
 
@@ -59,67 +62,70 @@
 
 .languagePopover {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 6px);
   right: 0;
   z-index: 30;
-  width: max-content;
-  min-width: 112px;
-  max-width: calc(100vw - 24px);
-  padding: 6px;
-  border: 1px solid var(--glass-border);
-  border-radius: var(--app-radius-md);
-  background: color-mix(in srgb, var(--app-surface-strong) 96%, transparent);
-  box-shadow: var(--glass-shadow);
-  backdrop-filter: var(--glass-backdrop-filter);
-  -webkit-backdrop-filter: var(--glass-backdrop-filter);
   display: flex;
   flex-direction: column;
   gap: 2px;
+  width: max-content;
+  min-width: 132px;
+  max-width: calc(100vw - 24px);
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--app-radius-md);
+  background: var(--popover);
+  box-shadow: var(--shadow-popover);
 }
 
 .languageOption {
-  width: auto;
-  min-width: 100%;
-  padding: 8px 14px;
-  border: 0;
-  border-radius: var(--app-radius-sm);
-  background: transparent;
-  color: var(--text-primary);
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  font-size: 14px;
+  width: auto;
+  min-width: 100%;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: calc(var(--app-radius-md) - 2px);
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 13px;
   font-weight: 500;
-  line-height: 1.3;
+  line-height: 1.4;
   text-align: left;
   white-space: nowrap;
+  cursor: pointer;
   transition:
     background-color $transition-fast,
     color $transition-fast;
 
   &:hover {
-    background: var(--app-accent-soft);
-    color: var(--primary-color);
+    background: var(--accent);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
   }
 }
 
 .languageOptionActive {
-  background: var(--app-accent-soft);
-  color: var(--primary-color);
-  font-weight: 600;
+  background: var(--accent);
+  font-weight: 500;
 }
 
+/* ---------- Card ---------- */
+
 .formPanel {
-  width: 100%;
   display: flex;
   justify-content: center;
+  width: 100%;
 }
 
 .formContent {
-  width: min(100%, 440px);
   display: flex;
   justify-content: center;
+  width: min(100%, 400px);
 }
 
 .setupFormContent {
@@ -127,22 +133,20 @@
 }
 
 .loginCard {
-  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 24px;
-  padding: 40px 35px;
-  border: 1px solid var(--glass-border);
+  width: 100%;
+  padding: 32px 28px;
+  border: 1px solid var(--border);
   border-radius: var(--app-radius-lg);
-  background: var(--glass-bg);
-  box-shadow: var(--glass-shadow);
-  backdrop-filter: var(--glass-backdrop-filter);
-  -webkit-backdrop-filter: var(--glass-backdrop-filter);
-  animation: cardEnter 0.48s cubic-bezier(0.16, 1, 0.3, 1);
+  background: var(--card);
+  box-shadow: var(--shadow-card);
+  animation: cardEnter 0.3s ease-out;
 
   @media (max-width: $breakpoint-mobile) {
+    gap: 20px;
     padding: 26px 18px;
-    border-radius: 16px;
   }
 }
 
@@ -151,9 +155,9 @@
 }
 
 .setupCard :global(.btn:not(.btn-sm):not(.btn-xs)) {
-  height: 48px;
-  min-height: 48px;
-  font-size: 16px;
+  height: 40px;
+  min-height: 40px;
+  font-size: 14px;
 }
 
 .cardBranding {
@@ -163,10 +167,10 @@
 }
 
 .brandLogo {
-  width: 240px;
+  display: block;
+  width: 200px;
   max-width: 80%;
   height: auto;
-  display: block;
 }
 
 .brandLogoDark {
@@ -191,27 +195,30 @@
   min-width: 0;
 }
 
+/* ---------- Connection summary ---------- */
+
 .connectionBox {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 15px 16px;
-  border: 1px solid var(--app-border);
+  padding: 12px 14px;
+  border: 1px solid var(--border);
   border-radius: var(--app-radius-md);
-  background: var(--app-surface-muted);
+  background: var(--surface-muted);
 
   .label {
-    color: var(--text-secondary);
-    font-size: 13px;
-    font-weight: 600;
+    color: var(--foreground-muted);
+    font-size: 12px;
+    font-weight: 500;
   }
 
   .value {
     min-width: 0;
     color: var(--text-primary);
-    font-size: 15px;
-    font-weight: 800;
-    line-height: 1.35;
+    font-family: $font-mono;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.5;
     overflow-wrap: anywhere;
   }
 
@@ -224,26 +231,27 @@
 
 .setupCard .connectionBox {
   display: grid;
-  grid-template-columns: 34px minmax(0, 1fr);
-  gap: 14px;
-  border-color: color-mix(in srgb, var(--primary-color) 24%, var(--app-border));
-  background: color-mix(in srgb, var(--primary-color) 4%, var(--glass-bg));
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 12px;
+  border-left: 3px solid var(--brand);
 }
 
 .connectionIcon {
   display: inline-grid;
   place-items: center;
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   margin-top: 1px;
-  border-radius: 50%;
-  background: var(--primary-gradient);
-  color: var(--primary-contrast, #fff);
+  border-radius: var(--app-radius-sm);
+  background: var(--primary-solid);
+  color: var(--primary-contrast);
 }
 
 .connectionCopy {
   min-width: 0;
 }
+
+/* ---------- Setup stepper ---------- */
 
 .stepper {
   display: flex;
@@ -259,23 +267,22 @@
 
 .stepItem {
   position: relative;
-  flex: 1 0 76px;
   display: flex;
+  flex: 1 0 76px;
   flex-direction: column;
   align-items: center;
   gap: 6px;
   min-width: 0;
-  color: var(--text-secondary);
+  color: var(--foreground-muted);
 
   &:not(:last-child)::after {
     content: '';
     position: absolute;
-    top: 16px;
-    left: calc(50% + 24px);
-    right: calc(-50% + 24px);
-    height: 2px;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--primary-color) 16%, var(--app-border));
+    top: 14px;
+    right: calc(-50% + 22px);
+    left: calc(50% + 22px);
+    height: 1px;
+    background: var(--border);
   }
 }
 
@@ -284,21 +291,21 @@
   z-index: 1;
   display: grid;
   place-items: center;
-  width: 32px;
-  height: 32px;
-  border: 2px solid color-mix(in srgb, var(--app-border) 88%, transparent);
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border-strong);
   border-radius: 50%;
-  background: var(--app-surface-strong);
-  color: var(--text-secondary);
-  font-size: 13px;
-  font-weight: 800;
+  background: var(--card);
+  color: var(--foreground-muted);
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .stepLabel {
   width: 100%;
   color: currentColor;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 500;
   line-height: 1.3;
   text-align: center;
   overflow-wrap: anywhere;
@@ -306,23 +313,23 @@
 
 .stepItemActive,
 .stepItemDone {
-  color: var(--primary-color);
+  color: var(--text-primary);
 }
 
 .stepItemActive .stepIndex {
-  border-color: var(--primary-color);
-  background: var(--primary-gradient);
-  color: #fff;
+  border-color: var(--brand);
+  background: var(--brand-soft);
+  color: var(--brand-soft-foreground);
 }
 
 .stepItemDone {
   .stepIndex {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
+    border-color: var(--brand);
+    color: var(--brand-strong);
   }
 
   &:not(:last-child)::after {
-    background: var(--primary-color);
+    background: var(--brand);
   }
 }
 
@@ -331,10 +338,10 @@
   flex-direction: column;
   gap: 18px;
   min-height: 276px;
-  padding: 20px 22px;
-  border: 1px solid var(--glass-border);
+  padding: 20px;
+  border: 1px solid var(--border);
   border-radius: var(--app-radius-md);
-  background: var(--glass-bg-secondary);
+  background: var(--surface-muted);
 
   @media (max-width: $breakpoint-mobile) {
     min-height: 0;
@@ -350,21 +357,22 @@
   h2 {
     margin: 0;
     color: var(--text-primary);
-    font-size: 22px;
-    font-weight: 800;
-    line-height: 1.2;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
   }
 }
 
 .stepEyebrow {
   display: inline-flex;
   width: fit-content;
-  padding: 3px 9px;
-  border-radius: 9px;
-  background: color-mix(in srgb, var(--primary-color) 12%, var(--bg-primary));
-  color: var(--primary-color);
-  font-size: 12px;
-  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: $radius-full;
+  background: var(--brand-soft);
+  color: var(--brand-soft-foreground);
+  font-size: 11px;
+  font-weight: 500;
 }
 
 .stepFields {
@@ -377,21 +385,19 @@
   }
 
   :global(.form-group > label) {
-    margin-bottom: 4px;
+    margin-bottom: 2px;
     color: var(--text-primary);
-    font-size: 14px;
-    font-weight: 700;
+    font-size: 13px;
+    font-weight: 500;
   }
 
   :global(.input) {
-    min-height: 48px;
-    border-radius: var(--app-radius-sm);
-    background: var(--app-input-bg);
-    font-size: 15px;
+    min-height: 38px;
+    font-size: 14px;
   }
 
   :global(.hint) {
-    margin-top: 5px;
+    margin-top: 4px;
     font-size: 12px;
     line-height: 1.55;
   }
@@ -401,41 +407,40 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 18px 20px;
-  border: 1px solid color-mix(in srgb, var(--primary-color) 28%, var(--app-border));
+  padding: 16px;
+  border: 1px solid var(--border);
   border-radius: var(--app-radius-md);
-  background: var(--app-surface-muted);
+  background: var(--card);
 
   p {
     margin: 0;
     color: var(--text-secondary);
-    font-size: 14px;
+    font-size: 13px;
     line-height: 1.65;
   }
 }
 
 .reviewGrid {
   display: grid;
-  gap: 0;
   overflow: hidden;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--border);
   border-radius: var(--app-radius-md);
-  background: var(--app-surface-muted);
+  background: var(--card);
 
   > div {
     display: grid;
-    grid-template-columns: 38px minmax(0, 1fr) minmax(108px, auto);
+    grid-template-columns: 36px minmax(0, 1fr) minmax(108px, auto);
     align-items: center;
     gap: 12px;
     min-width: 0;
-    padding: 12px 16px;
+    padding: 10px 14px;
 
     &:not(:last-child) {
-      border-bottom: 1px solid var(--app-border);
+      border-bottom: 1px solid var(--border);
     }
 
     @media (max-width: $breakpoint-mobile) {
-      grid-template-columns: 38px minmax(0, 1fr);
+      grid-template-columns: 36px minmax(0, 1fr);
 
       strong {
         grid-column: 2;
@@ -452,18 +457,20 @@
   .reviewIcon {
     display: inline-grid;
     place-items: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: var(--app-accent-soft);
-    color: var(--primary-color);
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--border);
+    border-radius: var(--app-radius-sm);
+    background: var(--surface-muted);
+    color: var(--foreground-secondary);
   }
 
   strong {
     min-width: 0;
     justify-self: end;
     color: var(--text-primary);
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: 500;
     overflow-wrap: anywhere;
   }
 }
@@ -474,8 +481,7 @@
   gap: 12px;
 
   button {
-    border-radius: 10px;
-    font-size: 15px;
+    font-size: 14px;
   }
 
   @media (max-width: $breakpoint-mobile) {
@@ -484,8 +490,8 @@
 }
 
 .setupBackButton {
-  color: var(--text-secondary) !important;
-  background: var(--app-surface-muted) !important;
+  color: var(--foreground-secondary) !important;
+  background: var(--card) !important;
 }
 
 .setupNextButton > span {
@@ -501,25 +507,28 @@
 
 .toggleLabel {
   color: var(--text-secondary);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
 }
 
 .errorBox {
-  padding: 10px 12px;
-  border: 1px solid rgba($error-color, 0.4);
-  border-radius: $radius-md;
-  background: rgba($error-color, 0.1);
-  color: $error-color;
+  padding: 9px 12px;
+  border: 1px solid var(--data-red-light-7);
+  border-radius: var(--app-radius-md);
+  background: var(--data-red-light-9);
+  color: var(--data-red-dark-2);
   font-size: 13px;
   line-height: 1.5;
 }
 
+/* ---------- Splash (auto-login) ---------- */
+
 @keyframes cardEnter {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(8px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -530,6 +539,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -540,13 +550,16 @@
     transform: scaleX(0);
     transform-origin: left;
   }
+
   50% {
     transform: scaleX(1);
     transform-origin: left;
   }
+
   50.01% {
     transform-origin: right;
   }
+
   100% {
     transform: scaleX(0);
     transform-origin: right;
@@ -558,13 +571,14 @@
   flex-direction: column;
   align-items: center;
   gap: $spacing-md;
-  animation: splashEnter 0.6s ease-out;
+  animation: splashEnter 0.4s ease-out;
 }
 
 .splashLogo {
-  width: 100px;
-  height: 102px;
   display: block;
+  width: 200px;
+  max-width: 70vw;
+  height: auto;
   object-fit: contain;
 }
 
@@ -584,17 +598,17 @@
 
 .splashLoader {
   width: 120px;
-  height: 3px;
+  height: 2px;
   margin-top: $spacing-md;
   overflow: hidden;
   border-radius: $radius-full;
-  background: var(--border-color);
+  background: var(--neutral-300);
 }
 
 .splashLoaderBar {
   width: 100%;
   height: 100%;
   border-radius: $radius-full;
-  background: var(--primary-gradient);
+  background: var(--brand);
   animation: splashLoading 1.2s ease-in-out infinite;
 }

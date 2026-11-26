@@ -219,7 +219,8 @@
     "check_connection": "檢查連線",
     "refresh_all": "全部重新整理",
     "open_github": "開啟 GitHub 儲存庫",
-    "logout": "登出"
+    "logout": "登出",
+    "menu": "選單"
   },
   "connection": {
     "title": "連線資訊",
@@ -254,7 +255,11 @@
     "system_info": "系統資訊",
     "system_info_short": "系統",
     "usage_maintenance": "用量維護",
-    "usage_maintenance_short": "維護"
+    "usage_maintenance_short": "維護",
+    "group_overview": "概覽",
+    "group_gateway": "閘道",
+    "group_system": "系統",
+    "group_plugins": "插件"
   },
   "usage_maintenance": {
     "archive_management": "封存管理",
@@ -942,7 +947,34 @@
     "no_token_mix_data": "暫無 Token 資料",
     "current_config_summary": "目前設定摘要",
     "manage": "管理",
-    "view_full_config": "查看完整設定"
+    "view_full_config": "查看完整設定",
+    "endpoints_title": "API 端點",
+    "endpoints_desc": "將 OpenAI、Anthropic、Gemini 或 Codex 用戶端指向此閘道。",
+    "endpoints_gateway_address": "閘道位址",
+    "endpoints_address_unknown": "閘道位址無法使用",
+    "endpoints_address_hint": "請先設定閘道位址以產生完整 URL。",
+    "endpoints_copy_url": "複製 {{url}}",
+    "endpoints_base_url": "Base URL",
+    "endpoints_auth_hint": "請使用一般的 CPA API Key 進行驗證，而不是管理金鑰。",
+    "endpoints_manage_keys": "管理 API Key",
+    "endpoints_open_config": "開啟設定",
+    "endpoint_group_openai": "OpenAI 相容",
+    "endpoint_group_anthropic": "Anthropic",
+    "endpoint_group_gemini": "Gemini",
+    "endpoint_group_codex": "Codex CLI",
+    "endpoint_chat_completions": "對話補全",
+    "endpoint_responses": "Responses API",
+    "endpoint_completions": "文字補全",
+    "endpoint_models": "模型清單",
+    "endpoint_messages": "訊息",
+    "endpoint_count_tokens": "Token 計數",
+    "endpoint_generate_content": "內容產生",
+    "endpoint_stream_generate_content": "串流內容產生",
+    "endpoint_codex_responses": "Responses",
+    "models_desc": "閘道目前提供的模型，點擊即可複製模型名稱。",
+    "models_copy_all": "全部複製",
+    "models_copied_all": "已複製 {{count}} 個模型名稱",
+    "models_other_group": "其他"
   },
   "basic_settings": {
     "title": "基本設定",

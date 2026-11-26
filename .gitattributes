@@ -1,3 +1,4 @@
 # CPAMP frontend is part of the application,
 # but exclude it from GitHub repository language statistics.
 apps/web/** -linguist-detectable
+graphify-out/graph.json merge=graphify

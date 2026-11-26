@@ -53,13 +53,13 @@
 }
 
 :global(.healthBadgeCooldown) {
-  background: var(--data-blue-light-9, #eff6ff);
-  border-color: var(--data-blue-light-7, #bfdbfe);
-  color: var(--data-blue-dark-2, #1e40af);
+  background: var(--data-accent-light-9, #fff7ed);
+  border-color: var(--data-accent-light-7, #fed7aa);
+  color: var(--data-accent-dark-2, #c2410c);
 }
 
 :global(.healthBadgeCooldown .healthBadgeDot) {
-  background: var(--data-blue-base, #2563eb);
+  background: var(--data-accent-base, #c2410c);
 }
 
 :global(.healthBadgeCritical) {

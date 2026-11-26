@@ -1,36 +1,41 @@
-import {
-  ReactNode,
-  SVGProps,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import { ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
+import { DropdownMenu, type DropdownMenuItem } from '@/components/ui/DropdownMenu';
 import { PageTransition } from '@/components/common/PageTransition';
 import { DatabaseMaintenanceBanner } from '@/components/common/DatabaseMaintenanceBanner';
 import { DatabaseMaintenanceProvider } from '@/components/common/DatabaseMaintenanceContext';
 import { MainRoutes } from '@/router/MainRoutes';
 import {
+  IconActivity,
+  IconBot,
+  IconChartLine,
+  IconCheck,
   IconGithub,
-  IconSidebarAuthFiles,
-  IconSidebarConfig,
-  IconSidebarDashboard,
-  IconSidebarLogs,
-  IconSidebarMonitor,
-  IconSidebarOauth,
-  IconSidebarPlugins,
-  IconSidebarProviders,
-  IconSidebarSystem,
-  IconSidebarUsage,
+  IconHardDrive,
+  IconKey,
+  IconLayoutDashboard,
+  IconLogOut,
+  IconMonitor,
+  IconMoon,
+  IconMoreVertical,
+  IconPanelLeftClose,
+  IconPanelLeftOpen,
+  IconPlugin,
+  IconRefreshCw,
+  IconScrollText,
+  IconServer,
+  IconSettings,
+  IconShield,
+  IconSun,
+  IconX,
 } from '@/components/ui/icons';
 import {
-  CPAMP_SYMBOL_COLOR_PNG_URL,
-  CPAMP_WORDMARK_COLOR_PNG_URL,
-  CPAMP_WORDMARK_ON_DARK_PNG_URL,
+  CPAMP_SYMBOL_BLACK_URL,
+  CPAMP_SYMBOL_WHITE_URL,
+  CPAMP_WORDMARK_BLACK_URL,
+  CPAMP_WORDMARK_WHITE_URL,
 } from '@/assets/brand';
 import {
   useAuthStore,
@@ -38,7 +43,6 @@ import {
   useLanguageStore,
   useNotificationStore,
   useThemeStore,
-  useVisualEffectsStore,
 } from '@/stores';
 import { pluginsApi } from '@/services/api';
 import {
@@ -54,156 +58,23 @@ import { usePanelFeatureAvailability } from '@/hooks/usePanelFeatureAvailability
 import { getDemoLogoutPath, prefixRouteBase, stripRouteBase } from '@/features/demo/demoMode';
 import { LANGUAGE_LABEL_KEYS, LANGUAGE_ORDER, STORAGE_KEY_SIDEBAR } from '@/utils/constants';
 import { isSupportedLanguage } from '@/utils/language';
-import type { Theme, VisualEffectsMode } from '@/types';
 
-const SIDEBAR_ICON_SIZE = 20;
+const SIDEBAR_ICON_SIZE = 16;
 const GITHUB_REPOSITORY_URL = 'https://github.com/seakee/CPA-Manager-Plus';
 
 const sidebarIcons: Record<string, ReactNode> = {
-  dashboard: <IconSidebarDashboard size={SIDEBAR_ICON_SIZE} />,
-  aiProviders: <IconSidebarProviders size={SIDEBAR_ICON_SIZE} />,
-  authFiles: <IconSidebarAuthFiles size={SIDEBAR_ICON_SIZE} />,
-  oauth: <IconSidebarOauth size={SIDEBAR_ICON_SIZE} />,
-  usageAnalytics: <IconSidebarUsage size={SIDEBAR_ICON_SIZE} />,
-  monitoring: <IconSidebarMonitor size={SIDEBAR_ICON_SIZE} />,
-  plugins: <IconSidebarPlugins size={SIDEBAR_ICON_SIZE} />,
-  config: <IconSidebarConfig size={SIDEBAR_ICON_SIZE} />,
-  logs: <IconSidebarLogs size={SIDEBAR_ICON_SIZE} />,
-  system: <IconSidebarSystem size={SIDEBAR_ICON_SIZE} />,
+  dashboard: <IconLayoutDashboard size={SIDEBAR_ICON_SIZE} />,
+  usageAnalytics: <IconChartLine size={SIDEBAR_ICON_SIZE} />,
+  monitoring: <IconActivity size={SIDEBAR_ICON_SIZE} />,
+  maintenance: <IconHardDrive size={SIDEBAR_ICON_SIZE} />,
+  aiProviders: <IconBot size={SIDEBAR_ICON_SIZE} />,
+  plugins: <IconPlugin size={SIDEBAR_ICON_SIZE} />,
+  config: <IconSettings size={SIDEBAR_ICON_SIZE} />,
+  accounts: <IconShield size={SIDEBAR_ICON_SIZE} />,
+  oauth: <IconKey size={SIDEBAR_ICON_SIZE} />,
+  logs: <IconScrollText size={SIDEBAR_ICON_SIZE} />,
+  system: <IconServer size={SIDEBAR_ICON_SIZE} />,
 };
-
-// Header action icons - smaller size for header buttons
-const headerIconProps: SVGProps<SVGSVGElement> = {
-  width: 16,
-  height: 16,
-  viewBox: '0 0 24 24',
-  fill: 'none',
-  stroke: 'currentColor',
-  strokeWidth: 2,
-  strokeLinecap: 'round',
-  strokeLinejoin: 'round',
-  'aria-hidden': 'true',
-  focusable: 'false',
-};
-
-const headerIcons = {
-  refresh: (
-    <svg {...headerIconProps}>
-      <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
-      <path d="M21 3v5h-5" />
-    </svg>
-  ),
-  menu: (
-    <svg {...headerIconProps}>
-      <path d="M4 7h16" />
-      <path d="M4 12h16" />
-      <path d="M4 17h16" />
-    </svg>
-  ),
-  close: (
-    <svg {...headerIconProps}>
-      <path d="M18 6 6 18" />
-      <path d="m6 6 12 12" />
-    </svg>
-  ),
-  sidebarCollapse: (
-    <svg {...headerIconProps}>
-      <rect x="3" y="4" width="18" height="16" rx="2" />
-      <path d="M9 4v16" />
-      <path d="m16 9-3 3 3 3" />
-    </svg>
-  ),
-  sidebarExpand: (
-    <svg {...headerIconProps}>
-      <rect x="3" y="4" width="18" height="16" rx="2" />
-      <path d="M9 4v16" />
-      <path d="m13 9 3 3-3 3" />
-    </svg>
-  ),
-  language: (
-    <svg {...headerIconProps}>
-      <circle cx="12" cy="12" r="10" />
-      <path d="M2 12h20" />
-      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-    </svg>
-  ),
-  sun: (
-    <svg {...headerIconProps}>
-      <circle cx="12" cy="12" r="4" />
-      <path d="M12 2v2" />
-      <path d="M12 20v2" />
-      <path d="m4.93 4.93 1.41 1.41" />
-      <path d="m17.66 17.66 1.41 1.41" />
-      <path d="M2 12h2" />
-      <path d="M20 12h2" />
-      <path d="m6.34 17.66-1.41 1.41" />
-      <path d="m19.07 4.93-1.41 1.41" />
-    </svg>
-  ),
-  moon: (
-    <svg {...headerIconProps}>
-      <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" />
-    </svg>
-  ),
-  autoTheme: (
-    <svg {...headerIconProps}>
-      <rect x="4" y="5" width="16" height="11" rx="2" />
-      <path d="M8 21h8" />
-      <path d="M12 16v5" />
-      <path d="M9 11a3 3 0 0 1 5.2-2" />
-      <path d="M14.5 7v2h-2" />
-      <path d="M15 11a3 3 0 0 1-5.2 2" />
-      <path d="M9.5 15v-2h2" />
-    </svg>
-  ),
-  visualEffectsFull: (
-    <svg {...headerIconProps}>
-      <path d="m12 3 1.85 5.15L19 10l-5.15 1.85L12 17l-1.85-5.15L5 10l5.15-1.85L12 3z" />
-      <path d="M5 3v4" />
-      <path d="M3 5h4" />
-      <path d="M19 17v4" />
-      <path d="M17 19h4" />
-    </svg>
-  ),
-  visualEffectsReduced: (
-    <svg {...headerIconProps}>
-      <path d="M4 14a8 8 0 0 1 16 0" />
-      <path d="M12 14l4-5" />
-      <path d="M8 14h8" />
-      <path d="M5 19h14" />
-    </svg>
-  ),
-  logout: (
-    <svg {...headerIconProps}>
-      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-      <path d="m16 17 5-5-5-5" />
-      <path d="M21 12H9" />
-    </svg>
-  ),
-};
-
-const THEME_OPTIONS: Array<{
-  key: Theme;
-  labelKey: string;
-  icon: ReactNode;
-}> = [
-  { key: 'auto', labelKey: 'theme.auto', icon: headerIcons.autoTheme },
-  { key: 'white', labelKey: 'theme.white', icon: headerIcons.sun },
-  { key: 'dark', labelKey: 'theme.dark', icon: headerIcons.moon },
-];
-
-const VISUAL_EFFECTS_OPTIONS: Array<{
-  key: VisualEffectsMode;
-  labelKey: string;
-  icon: ReactNode;
-}> = [
-  { key: 'full', labelKey: 'visual_effects.full', icon: headerIcons.visualEffectsFull },
-  {
-    key: 'reduced',
-    labelKey: 'visual_effects.reduced',
-    icon: headerIcons.visualEffectsReduced,
-  },
-];
 
 function PluginSidebarIcon({ src }: { src: string }) {
   const [failed, setFailed] = useState(false);
@@ -212,16 +83,22 @@ function PluginSidebarIcon({ src }: { src: string }) {
   return showImage ? (
     <img src={src} alt="" onError={() => setFailed(true)} />
   ) : (
-    <IconSidebarPlugins size={SIDEBAR_ICON_SIZE} />
+    <IconPlugin size={SIDEBAR_ICON_SIZE} />
   );
 }
 
 type NavItem = {
   path: string;
   label: string;
-  shortLabel?: string;
   icon: ReactNode;
   exact?: boolean;
+  /** Rendered indented, for entries that belong to the item above them. */
+  nested?: boolean;
+};
+
+type NavGroup = {
+  label: string;
+  items: NavItem[];
 };
 
 interface MainLayoutProps {
@@ -247,9 +124,8 @@ function MainLayoutContent({ routeBase = '', demoMode = false }: MainLayoutProps
   const featureAvailability = usePanelFeatureAvailability();
 
   const theme = useThemeStore((state) => state.theme);
-  const setTheme = useThemeStore((state) => state.setTheme);
-  const visualEffectsMode = useVisualEffectsStore((state) => state.mode);
-  const setVisualEffectsMode = useVisualEffectsStore((state) => state.setMode);
+  const resolvedTheme = useThemeStore((state) => state.resolvedTheme);
+  const cycleTheme = useThemeStore((state) => state.cycleTheme);
   const language = useLanguageStore((state) => state.language);
   const setLanguage = useLanguageStore((state) => state.setLanguage);
 
@@ -261,19 +137,14 @@ function MainLayoutContent({ routeBase = '', demoMode = false }: MainLayoutProps
       return false;
     }
   });
-  const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
-  const [themeMenuOpen, setThemeMenuOpen] = useState(false);
-  const [visualEffectsMenuOpen, setVisualEffectsMenuOpen] = useState(false);
   const [pluginResources, setPluginResources] = useState<PluginResourceEntry[]>([]);
   const contentRef = useRef<HTMLDivElement | null>(null);
-  const languageMenuRef = useRef<HTMLDivElement | null>(null);
-  const themeMenuRef = useRef<HTMLDivElement | null>(null);
-  const visualEffectsMenuRef = useRef<HTMLDivElement | null>(null);
   const headerRef = useRef<HTMLElement | null>(null);
 
   const fullBrandName = 'CPA Manager Plus';
   const isLogsPage = routePathname.startsWith('/logs');
   const isPluginResourcePage = routePathname.startsWith('/plugin-pages');
+  const isDarkTheme = resolvedTheme === 'dark';
   const showSidebarLabels = !sidebarCollapsed || sidebarOpen;
   const configPluginsEnabled = config?.pluginsEnabled;
   const pluginControlMenuVisible = isPluginManagementNavVisible({
@@ -343,129 +214,6 @@ function MainLayoutContent({ routeBase = '', demoMode = false }: MainLayoutProps
   }, []);
 
   useEffect(() => {
-    if (!languageMenuOpen) {
-      return;
-    }
-
-    const handlePointerDown = (event: MouseEvent) => {
-      if (!languageMenuRef.current?.contains(event.target as Node)) {
-        setLanguageMenuOpen(false);
-      }
-    };
-
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setLanguageMenuOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handlePointerDown);
-    document.addEventListener('keydown', handleEscape);
-
-    return () => {
-      document.removeEventListener('mousedown', handlePointerDown);
-      document.removeEventListener('keydown', handleEscape);
-    };
-  }, [languageMenuOpen]);
-
-  useEffect(() => {
-    if (!themeMenuOpen) {
-      return;
-    }
-
-    const handlePointerDown = (event: MouseEvent) => {
-      if (!themeMenuRef.current?.contains(event.target as Node)) {
-        setThemeMenuOpen(false);
-      }
-    };
-
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setThemeMenuOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handlePointerDown);
-    document.addEventListener('keydown', handleEscape);
-
-    return () => {
-      document.removeEventListener('mousedown', handlePointerDown);
-      document.removeEventListener('keydown', handleEscape);
-    };
-  }, [themeMenuOpen]);
-
-  useEffect(() => {
-    if (!visualEffectsMenuOpen) {
-      return;
-    }
-
-    const handlePointerDown = (event: MouseEvent) => {
-      if (!visualEffectsMenuRef.current?.contains(event.target as Node)) {
-        setVisualEffectsMenuOpen(false);
-      }
-    };
-
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setVisualEffectsMenuOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handlePointerDown);
-    document.addEventListener('keydown', handleEscape);
-
-    return () => {
-      document.removeEventListener('mousedown', handlePointerDown);
-      document.removeEventListener('keydown', handleEscape);
-    };
-  }, [visualEffectsMenuOpen]);
-
-  const toggleLanguageMenu = useCallback(() => {
-    setLanguageMenuOpen((prev) => !prev);
-    setThemeMenuOpen(false);
-    setVisualEffectsMenuOpen(false);
-  }, []);
-
-  const toggleThemeMenu = useCallback(() => {
-    setThemeMenuOpen((prev) => !prev);
-    setLanguageMenuOpen(false);
-    setVisualEffectsMenuOpen(false);
-  }, []);
-
-  const toggleVisualEffectsMenu = useCallback(() => {
-    setVisualEffectsMenuOpen((prev) => !prev);
-    setLanguageMenuOpen(false);
-    setThemeMenuOpen(false);
-  }, []);
-
-  const handleThemeSelect = useCallback(
-    (nextTheme: Theme) => {
-      setTheme(nextTheme);
-      setThemeMenuOpen(false);
-    },
-    [setTheme]
-  );
-
-  const handleVisualEffectsSelect = useCallback(
-    (nextMode: VisualEffectsMode) => {
-      setVisualEffectsMode(nextMode);
-      setVisualEffectsMenuOpen(false);
-    },
-    [setVisualEffectsMode]
-  );
-
-  const handleLanguageSelect = useCallback(
-    (nextLanguage: string) => {
-      if (!isSupportedLanguage(nextLanguage)) {
-        return;
-      }
-      setLanguage(nextLanguage);
-      setLanguageMenuOpen(false);
-    },
-    [setLanguage]
-  );
-
-  useEffect(() => {
     fetchConfig().catch(() => {
       // ignore initial failure; login flow会提示
     });
@@ -505,22 +253,56 @@ function MainLayoutContent({ routeBase = '', demoMode = false }: MainLayoutProps
     };
   }, [apiBase, configPluginsEnabled, loadPluginResources]);
 
-  const navShortLabel = (key: string, fallback: string) => {
-    const shortKey = `${key}_short`;
-    const label = t(shortKey, { defaultValue: fallback });
-    return label === shortKey ? fallback : label;
+  const handleLanguageSelect = (nextLanguage: string) => {
+    if (!isSupportedLanguage(nextLanguage)) {
+      return;
+    }
+    setLanguage(nextLanguage);
   };
+
+  const handleLogout = () => {
+    if (demoMode) {
+      navigate(getDemoLogoutPath(routeBase), { replace: true });
+      return;
+    }
+    logout();
+  };
+
+  // Built inline on purpose: the list is tiny, and capturing handlers inside a
+  // manual memo is something the React Compiler lint rejects.
+  const headerMenuItems: DropdownMenuItem[] = [
+    ...LANGUAGE_ORDER.map((lang) => ({
+      key: `language-${lang}`,
+      label: t(LANGUAGE_LABEL_KEYS[lang]),
+      icon: language === lang ? <IconCheck size={16} /> : undefined,
+      onClick: () => handleLanguageSelect(lang),
+    })),
+    { key: 'divider-github', type: 'divider' as const },
+    {
+      key: 'github',
+      label: t('header.open_github'),
+      icon: <IconGithub size={16} />,
+      onClick: () => window.open(GITHUB_REPOSITORY_URL, '_blank', 'noopener,noreferrer'),
+    },
+    { key: 'divider-logout', type: 'divider' as const },
+    {
+      key: 'logout',
+      label: t('header.logout'),
+      icon: <IconLogOut size={16} />,
+      tone: 'danger' as const,
+      onClick: handleLogout,
+    },
+  ];
+
   const dashboardNavItem: NavItem = {
     path: '/',
     label: t('nav.dashboard'),
-    shortLabel: navShortLabel('nav.dashboard', t('nav.dashboard')),
     icon: sidebarIcons.dashboard,
   };
   const usageAnalyticsNavItem = featureAvailability.requestMonitoringAvailable
     ? {
         path: '/usage-analytics',
         label: t('nav.usage_analytics'),
-        shortLabel: navShortLabel('nav.usage_analytics', t('nav.usage_analytics')),
         icon: sidebarIcons.usageAnalytics,
       }
     : null;
@@ -528,7 +310,6 @@ function MainLayoutContent({ routeBase = '', demoMode = false }: MainLayoutProps
     ? {
         path: '/monitoring',
         label: t('nav.monitoring_center'),
-        shortLabel: navShortLabel('nav.monitoring_center', t('nav.monitoring_center')),
         icon: sidebarIcons.monitoring,
       }
     : null;
@@ -538,18 +319,13 @@ function MainLayoutContent({ routeBase = '', demoMode = false }: MainLayoutProps
       ? {
           path: '/usage-maintenance',
           label: t('nav.usage_maintenance', { defaultValue: 'Usage Maintenance' }),
-          shortLabel: navShortLabel(
-            'nav.usage_maintenance',
-            t('nav.usage_maintenance', { defaultValue: 'Maintenance' })
-          ),
-          icon: sidebarIcons.system,
+          icon: sidebarIcons.maintenance,
         }
       : null;
   const operationNavItems: NavItem[] = [
     {
       path: '/logs',
       label: t('nav.logs'),
-      shortLabel: navShortLabel('nav.logs', t('nav.logs')),
       icon: sidebarIcons.logs,
     },
   ];
@@ -558,70 +334,72 @@ function MainLayoutContent({ routeBase = '', demoMode = false }: MainLayoutProps
         {
           path: '/plugins',
           label: t('nav.plugins'),
-          shortLabel: navShortLabel('nav.plugins', t('nav.plugins')),
           icon: sidebarIcons.plugins,
         },
       ]
     : [];
+  // Pages contributed by installed plugins. They sit beneath the Plugins entry
+  // in their own sidebar group so they don't read as built-in pages.
   const pluginResourceNavItems: NavItem[] = pluginControlMenuVisible
     ? pluginResources.map((resource) => ({
         path: resource.route,
         label: resource.label,
-        shortLabel: resource.label,
         icon: <PluginSidebarIcon src={resolvePluginAssetURL(resource.pluginLogo, apiBase)} />,
+        nested: true,
       }))
     : [];
-  const navSections: NavItem[][] = [
-    [
-      dashboardNavItem,
-      ...(usageAnalyticsNavItem ? [usageAnalyticsNavItem] : []),
-      ...(monitoringNavItem ? [monitoringNavItem] : []),
-      ...(usageMaintenanceNavItem ? [usageMaintenanceNavItem] : []),
-    ],
-    [
-      {
-        path: '/config',
-        label: t('nav.config_management'),
-        shortLabel: navShortLabel('nav.config_management', t('nav.config_management')),
-        icon: sidebarIcons.config,
-      },
-      {
-        path: '/ai-providers',
-        label: t('nav.ai_providers'),
-        shortLabel: navShortLabel('nav.ai_providers', t('nav.ai_providers')),
-        icon: sidebarIcons.aiProviders,
-      },
-      ...pluginControlNavItems,
-    ],
-    [
-      {
-        path: '/accounts',
-        label: t('nav.accounts', { defaultValue: t('accounts.title') }),
-        shortLabel: navShortLabel(
-          'nav.accounts',
-          t('nav.accounts', { defaultValue: t('accounts.title') })
-        ),
-        icon: sidebarIcons.authFiles,
-      },
-      {
-        path: '/oauth',
-        label: t('nav.oauth', { defaultValue: 'OAuth' }),
-        shortLabel: navShortLabel('nav.oauth', t('nav.oauth', { defaultValue: 'OAuth' })),
-        icon: sidebarIcons.oauth,
-      },
-    ],
-    operationNavItems,
-    pluginResourceNavItems,
-    [
-      {
-        path: '/system',
-        label: t('nav.system_info'),
-        shortLabel: navShortLabel('nav.system_info', t('nav.system_info')),
-        icon: sidebarIcons.system,
-      },
-    ],
-  ].filter((section) => section.length > 0);
-  const navItems = navSections.flat();
+  const navGroups: NavGroup[] = [
+    {
+      label: t('nav.group_overview', { defaultValue: 'Overview' }),
+      items: [
+        dashboardNavItem,
+        ...(usageAnalyticsNavItem ? [usageAnalyticsNavItem] : []),
+        ...(monitoringNavItem ? [monitoringNavItem] : []),
+        ...(usageMaintenanceNavItem ? [usageMaintenanceNavItem] : []),
+      ],
+    },
+    {
+      label: t('nav.group_gateway', { defaultValue: 'Gateway' }),
+      items: [
+        {
+          path: '/ai-providers',
+          label: t('nav.ai_providers'),
+          icon: sidebarIcons.aiProviders,
+        },
+        {
+          path: '/accounts',
+          label: t('nav.accounts', { defaultValue: t('accounts.title') }),
+          icon: sidebarIcons.accounts,
+        },
+        {
+          path: '/oauth',
+          label: t('nav.oauth', { defaultValue: 'OAuth' }),
+          icon: sidebarIcons.oauth,
+        },
+        {
+          path: '/config',
+          label: t('nav.config_management'),
+          icon: sidebarIcons.config,
+        },
+      ],
+    },
+    {
+      label: t('nav.group_plugins', { defaultValue: 'Plugins' }),
+      items: [...pluginControlNavItems, ...pluginResourceNavItems],
+    },
+    {
+      label: t('nav.group_system', { defaultValue: 'System' }),
+      items: [
+        ...operationNavItems,
+        {
+          path: '/system',
+          label: t('nav.system_info'),
+          icon: sidebarIcons.system,
+        },
+      ],
+    },
+  ].filter((group) => group.items.length > 0);
+  const navItems = navGroups.flatMap((group) => group.items);
   const navOrder = navItems.map((item) => item.path);
   const getRouteOrder = (pathname: string) => {
     const trimmedPath =
@@ -686,13 +464,7 @@ function MainLayoutContent({ routeBase = '', demoMode = false }: MainLayoutProps
     }
     showNotification(t('notification.data_refreshed'), 'success');
   };
-  const handleLogout = () => {
-    if (demoMode) {
-      navigate(getDemoLogoutPath(routeBase), { replace: true });
-      return;
-    }
-    logout();
-  };
+
   const mobileSidebarToggleLabel = sidebarOpen
     ? t('sidebar.toggle_collapse', { defaultValue: 'Close navigation' })
     : t('sidebar.toggle_expand', { defaultValue: 'Open navigation' });
@@ -712,6 +484,18 @@ function MainLayoutContent({ routeBase = '', demoMode = false }: MainLayoutProps
   const standaloneRouteLabel =
     currentPath === '/accounts' ? t('nav.accounts', { defaultValue: t('accounts.title') }) : null;
   const currentRouteLabel = activeNavItem?.label ?? standaloneRouteLabel ?? fullBrandName;
+  const themeLabel = t(
+    theme === 'white' ? 'theme.white' : theme === 'dark' ? 'theme.dark' : 'theme.auto'
+  );
+  // The button cycles auto -> light -> dark, so the icon shows the active mode.
+  const themeIcon =
+    theme === 'white' ? (
+      <IconSun size={16} />
+    ) : theme === 'dark' ? (
+      <IconMoon size={16} />
+    ) : (
+      <IconMonitor size={16} />
+    );
 
   return (
     <div
@@ -747,11 +531,13 @@ function MainLayoutContent({ routeBase = '', demoMode = false }: MainLayoutProps
               title={mobileSidebarToggleLabel}
               aria-label={mobileSidebarToggleLabel}
             >
-              {sidebarOpen
-                ? headerIcons.close
-                : sidebarCollapsed
-                  ? headerIcons.sidebarExpand
-                  : headerIcons.sidebarCollapse}
+              {sidebarOpen ? (
+                <IconX size={16} />
+              ) : sidebarCollapsed ? (
+                <IconPanelLeftOpen size={16} />
+              ) : (
+                <IconPanelLeftClose size={16} />
+              )}
             </button>
 
             <nav
@@ -770,152 +556,26 @@ function MainLayoutContent({ routeBase = '', demoMode = false }: MainLayoutProps
               title={t('header.refresh_all')}
               aria-label={t('header.refresh_all')}
             >
-              {headerIcons.refresh}
+              <IconRefreshCw size={16} />
             </Button>
-
-            <a
-              className="btn btn-ghost btn-sm"
-              href={GITHUB_REPOSITORY_URL}
-              target="_blank"
-              rel="noreferrer"
-              title={t('header.open_github')}
-              aria-label={t('header.open_github')}
-            >
-              <span>
-                <IconGithub size={16} />
-              </span>
-            </a>
-
-            <div
-              className={`language-menu ${languageMenuOpen ? 'open' : ''}`}
-              ref={languageMenuRef}
-            >
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={toggleLanguageMenu}
-                title={t('language.switch')}
-                aria-label={t('language.switch')}
-                aria-haspopup="menu"
-                aria-expanded={languageMenuOpen}
-              >
-                {headerIcons.language}
-              </Button>
-              {languageMenuOpen && (
-                <div
-                  className="notification entering language-menu-popover"
-                  role="menu"
-                  aria-label={t('language.switch')}
-                >
-                  {LANGUAGE_ORDER.map((lang) => (
-                    <button
-                      key={lang}
-                      type="button"
-                      className={`language-menu-option ${language === lang ? 'active' : ''}`}
-                      onClick={() => handleLanguageSelect(lang)}
-                      role="menuitemradio"
-                      aria-checked={language === lang}
-                    >
-                      <span>{t(LANGUAGE_LABEL_KEYS[lang])}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className={`theme-menu ${themeMenuOpen ? 'open' : ''}`} ref={themeMenuRef}>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={toggleThemeMenu}
-                title={t('theme.switch')}
-                aria-label={t('theme.switch')}
-                aria-haspopup="menu"
-                aria-expanded={themeMenuOpen}
-              >
-                {theme === 'auto'
-                  ? headerIcons.autoTheme
-                  : theme === 'dark'
-                    ? headerIcons.moon
-                    : headerIcons.sun}
-              </Button>
-              {themeMenuOpen && (
-                <div
-                  className="notification entering theme-menu-popover"
-                  role="menu"
-                  aria-label={t('theme.switch')}
-                >
-                  {THEME_OPTIONS.map((option) => (
-                    <button
-                      key={option.key}
-                      type="button"
-                      className={`theme-option ${theme === option.key ? 'active' : ''}`}
-                      onClick={() => handleThemeSelect(option.key)}
-                      role="menuitemradio"
-                      aria-checked={theme === option.key}
-                      title={t(option.labelKey)}
-                      aria-label={t(option.labelKey)}
-                    >
-                      <span className="theme-option-icon">{option.icon}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div
-              className={`visual-effects-menu ${visualEffectsMenuOpen ? 'open' : ''}`}
-              ref={visualEffectsMenuRef}
-            >
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={toggleVisualEffectsMenu}
-                title={t('visual_effects.switch')}
-                aria-label={t('visual_effects.switch')}
-                aria-haspopup="menu"
-                aria-expanded={visualEffectsMenuOpen}
-              >
-                {visualEffectsMode === 'full'
-                  ? headerIcons.visualEffectsFull
-                  : headerIcons.visualEffectsReduced}
-              </Button>
-              {visualEffectsMenuOpen && (
-                <div
-                  className="notification entering visual-effects-menu-popover"
-                  role="menu"
-                  aria-label={t('visual_effects.switch')}
-                >
-                  {VISUAL_EFFECTS_OPTIONS.map((option) => (
-                    <button
-                      key={option.key}
-                      type="button"
-                      className={`visual-effects-option ${
-                        visualEffectsMode === option.key ? 'active' : ''
-                      }`}
-                      onClick={() => handleVisualEffectsSelect(option.key)}
-                      role="menuitemradio"
-                      aria-checked={visualEffectsMode === option.key}
-                      title={t(option.labelKey)}
-                      aria-label={t(option.labelKey)}
-                    >
-                      <span className="visual-effects-option-icon">{option.icon}</span>
-                      <span className="visual-effects-option-label">{t(option.labelKey)}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
 
             <Button
               variant="ghost"
               size="sm"
-              onClick={handleLogout}
-              title={t('header.logout')}
-              aria-label={t('header.logout')}
+              onClick={cycleTheme}
+              title={`${t('theme.switch')}: ${themeLabel}`}
+              aria-label={`${t('theme.switch')}: ${themeLabel}`}
             >
-              {headerIcons.logout}
+              {themeIcon}
             </Button>
+
+            <DropdownMenu
+              ariaLabel={t('header.menu', { defaultValue: 'Menu' })}
+              triggerTitle={t('header.menu', { defaultValue: 'Menu' })}
+              triggerClassName="header-menu-trigger"
+              triggerIcon={<IconMoreVertical size={16} />}
+              items={headerMenuItems}
+            />
           </div>
         </div>
       </header>
@@ -933,41 +593,47 @@ function MainLayoutContent({ routeBase = '', demoMode = false }: MainLayoutProps
         <aside
           className={`sidebar ${sidebarOpen ? 'open' : ''} ${sidebarCollapsed ? 'collapsed' : ''}`}
         >
-          <div className="sidebar-brand" title={fullBrandName}>
-            <div className="sidebar-brand-main">
+          <NavLink
+            to={prefixRouteBase('/', routeBase)}
+            end
+            className="sidebar-brand"
+            title={fullBrandName}
+            aria-label={fullBrandName}
+            onClick={() => setSidebarOpen(false)}
+          >
+            <span className="sidebar-brand-main">
               <img
-                src={CPAMP_SYMBOL_COLOR_PNG_URL}
-                alt={showSidebarLabels ? '' : 'CPA Manager Plus'}
+                src={isDarkTheme ? CPAMP_SYMBOL_WHITE_URL : CPAMP_SYMBOL_BLACK_URL}
+                alt=""
                 className="sidebar-brand-symbol"
               />
               {showSidebarLabels && (
-                <>
-                  <img
-                    src={CPAMP_WORDMARK_COLOR_PNG_URL}
-                    alt="CPA Manager Plus"
-                    className="sidebar-brand-wordmark sidebar-brand-wordmark-light"
-                  />
-                  <img
-                    src={CPAMP_WORDMARK_ON_DARK_PNG_URL}
-                    alt="CPA Manager Plus"
-                    className="sidebar-brand-wordmark sidebar-brand-wordmark-dark"
-                  />
-                </>
+                <img
+                  src={isDarkTheme ? CPAMP_WORDMARK_WHITE_URL : CPAMP_WORDMARK_BLACK_URL}
+                  alt="CPA Manager Plus"
+                  className="sidebar-brand-wordmark"
+                />
               )}
-            </div>
-          </div>
+            </span>
+          </NavLink>
 
           <div className="nav-section">
-            {navSections.map((section, sectionIndex) => (
-              <div className="nav-menu-section" key={`nav-section-${sectionIndex}`}>
-                {sectionIndex > 0 && <div className="nav-menu-divider" aria-hidden="true" />}
-                {section.map((item) => (
+            {navGroups.map((group, groupIndex) => (
+              <div className="nav-menu-section" key={`nav-section-${groupIndex}`}>
+                {showSidebarLabels ? (
+                  <div className="nav-menu-label">{group.label}</div>
+                ) : groupIndex > 0 ? (
+                  <div className="nav-menu-divider" aria-hidden="true" />
+                ) : null}
+                {group.items.map((item) => (
                   <NavLink
                     key={item.path}
                     to={prefixRouteBase(item.path, routeBase)}
                     end={item.path === '/' || item.exact}
                     className={({ isActive }) =>
-                      `nav-item ${isActive || matchesNavPath(item, currentPath) ? 'active' : ''}`
+                      `nav-item ${item.nested ? 'nav-item-nested' : ''} ${
+                        isActive || matchesNavPath(item, currentPath) ? 'active' : ''
+                      }`
                     }
                     onClick={() => setSidebarOpen(false)}
                     title={item.label}

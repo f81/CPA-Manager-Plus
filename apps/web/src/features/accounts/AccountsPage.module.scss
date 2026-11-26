@@ -9,13 +9,13 @@
   --accounts-strong-border: var(--border-primary);
   --accounts-text: var(--text-primary);
   --accounts-muted: var(--text-secondary);
-  --accounts-brand: var(--data-blue-base);
+  --accounts-brand: var(--data-accent-base);
   --accounts-brand-active: var(--primary-active, var(--primary-color));
   --accounts-primary: var(--accounts-brand);
   --accounts-success: var(--data-green-base);
   --accounts-warning: var(--data-amber-base);
   --accounts-danger: var(--data-red-base);
-  --accounts-info: var(--data-blue-base);
+  --accounts-info: var(--data-accent-base);
   --accounts-indigo: var(--data-violet-base, var(--primary-color));
   --accounts-neutral: var(--accounts-muted);
   --accounts-overlay: color-mix(in srgb, var(--accounts-brand-active) 30%, transparent);
@@ -3078,7 +3078,7 @@
   left: 50%;
   transform: translateX(-50%);
   background: var(--bg-primary, #fff);
-  border: 1px solid var(--border-subtle, #d8e5f2);
+  border: 1px solid var(--border-subtle, #e5e5e5);
   border-radius: 10px;
   padding: 8px 10px;
   font-size: 11px;
@@ -3106,7 +3106,7 @@
     left: 50%;
     transform: translateX(-50%);
     border: 6px solid transparent;
-    border-top-color: var(--border-subtle, #d8e5f2);
+    border-top-color: var(--border-subtle, #e5e5e5);
   }
 }
 

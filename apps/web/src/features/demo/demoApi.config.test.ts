@@ -76,4 +76,11 @@ describe('demo configuration API', () => {
     expect(parsed.routing?.strategy).toBe('round-robin');
     expect(routing).toEqual({ strategy: 'round-robin' });
   });
+
+  it('returns the API key list in the same envelope as the real management API', async () => {
+    const response = await handleDemoApiRequest<unknown>('get', '/api-keys');
+
+    expect(response).toEqual({ 'api-keys': expect.any(Array) });
+    expect((response as { 'api-keys': string[] })['api-keys']).toContain('sk-demo-primary');
+  });
 });
